@@ -14,4 +14,31 @@ If you are not on a Windows machine then it's recommended that you install Node 
 * JavaScript API - Emma Poposka
 * Contract design patterns - Hugo O'Connor
 
+## Technologies that will be covered on the day will be
+- Ethereum http://ethereum.org/
+  - geth https://github.com/ethereum/go-ethereum/wiki/Geth 
+  - Mist https://github.com/ethereum/mist 
+  - Solidity https://solidity.readthedocs.org/en/latest/ 
+  - Browser Solidity https://ethereum.github.io/browser-solidity/ 
+  - web3 https://github.com/ethereum/wiki/wiki/JavaScript-API 
+- Node.js https://nodejs.org/en/ 
+  - npm https://www.npmjs.com/ 
+- Truffle https://github.com/ConsenSys/truffle 
+- Meteor https://www.meteor.com/
 
+## Ethereum Support
+* Ethereum Stack Exchange http://ethereum.stackexchange.com/
+* Solidity on Gitter https://gitter.im/ethereum/solidity
+
+## Other Ethereum tools
+
+### Build, deployment and testing
+- Ether.Camp https://live.ether.camp/
+- BlockApps http://blockapps.net/
+- Embark https://iurimatias.github.io/embark-framework/
+- dapple https://github.com/nexusdev/dapple
+- Eris https://erisindustries.com/
+
+### Extensions to code editors
+- Visual Studio Solidity extension
+- VS Code Solidity extension

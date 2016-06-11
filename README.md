@@ -4,7 +4,7 @@ This is a repository for the SydEthereum development workshop on 19 June 2016 at
 ##Pre workshop
 
 ## Register
-Attendees will have to be registered to access the secure building. Please fill in the following register for http://goo.gl/forms/dt08Sl77oAnvg1hH3
+Attendees will have to be registered to access the secure building. Please complete the following register form http://goo.gl/forms/dt08Sl77oAnvg1hH3
 
 ### Install Node.js
 Attendees will need a laptop with node.js installed on it. Node.js can be downloaded from
@@ -13,7 +13,7 @@ https://nodejs.org/en/download/
 If you are not on a Windows machine then it's recommended that you install Node Version Manager. NVM allows you to easily swtich between different version of node.js which might be supported by different node.js servers, frameworks or libraries. Installation instructions can be found at https://github.com/creationix/nvm
 
 ### Install Telegram
-On the day the instructors will use the existing Ethereum Australia group on [Telegram](https://telegram.org/) to share code snippets, links and useful information. Please install Telegram and use the following link to join the group 
+On the day the instructors will use the existing Ethereum Australia group on [Telegram](https://telegram.org/) to share code snippets, links and useful information. Please install Telegram and use the following link to join the Ethereum Australia group 
 https://telegram.me/joinchat/Ay6EdQa_YfyccVlsVA3LSA
 
 ## Workshop sessions

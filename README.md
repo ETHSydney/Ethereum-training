@@ -4,7 +4,7 @@ This is a repository for the SydEthereum development workshop on 19 June 2016 at
 ##Pre workshop
 
 ## Register
-Attendees will have to be registered to access the secure building. Please complete the following register form http://goo.gl/forms/dt08Sl77oAnvg1hH3
+Attendees will have to be registered to access the secure building. Please complete the following register form before the event http://goo.gl/forms/dt08Sl77oAnvg1hH3
 
 ### Install Node.js
 Attendees will need a laptop with node.js installed on it. Node.js can be downloaded from

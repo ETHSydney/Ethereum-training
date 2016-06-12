@@ -46,6 +46,17 @@ contract('Access', function(accounts) {
 	}).then(done).catch(done);
   });
 
+  it("existing member should be able to become special", function(done) {
+    var access = Access.deployed();
+    access.addMember(accounts[1], false, {from: accounts[0]}).then(function() {
+      return access.addMember(accounts[1], true, {from: accounts[0]});
+  	}).then(function(){
+      return access.member.call(accounts[1]);
+  	}).then(function(member) {
+  	  assert.equal(member[2], true, "member set to special");
+	}).then(done).catch(done);
+  });
+
   it("should be able to recieve funds", function(done) {
     var access = Access.deployed();
     var amount = 1000000;

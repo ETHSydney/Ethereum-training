@@ -10,7 +10,7 @@ contract Access {
   	}
 
   	event NewMember(address newMember, uint joinDate, bool exists, bool isSpecial);
-  	event Spend(address recipient, uint amount);
+  	event Spend(uint date, address recipient, uint amount);
 
   	function Access(){
   		member[msg.sender] = Member(now, true, true);
@@ -30,6 +30,9 @@ contract Access {
 			members.push(_nominee);
 			NewMember(_nominee, member[_nominee].joinDate, member[_nominee].exists, member[_nominee].isSpecial);
 			return true;
+  		} else if (member[_nominee].exists){
+  			member[_nominee].isSpecial = _isSpecial;
+  			return true;
   		}
 		return false;
   	}
@@ -37,7 +40,7 @@ contract Access {
   	function spend(address _recipient, uint _amount) onlySpecial returns (bool success){
   		if(this.balance >= _amount){
   			_recipient.send(_amount);
-  			Spend(_recipient, _amount);
+  			Spend(now, _recipient, _amount);
   			return true;
   		} else {
   			return false;

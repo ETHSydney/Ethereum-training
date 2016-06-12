@@ -30,19 +30,20 @@ contract('Access', function(accounts) {
 
   it("new member should exist", function(done) {
     var access = Access.deployed();
-    access.addMember.call(accounts[1], false, {from: accounts[0]}).then(function(result) {
-      access.member.call(accounts[1]).then(function(member) {
-	      assert.equal(member[1], true, "member not set to exists");
-	    }).then(done).catch(done);
-    }).then(done).catch(done);
+    access.addMember(accounts[1], false, {from: accounts[0]}).then(function(result) {
+      return access.member.call(accounts[1]);
+  	}).then(function(member) {
+  	  assert.equal(member[1], true, "member not set to exists");
+	}).then(done).catch(done);
   });
 
-  // it("should set member for accounts[1]", function(done) {
-  //   var access = Access.deployed();
-  //   access.members.call(1).then(function(result) {
-  //     assert.equal(result, accounts[1], "member doesn't exist");
-  //   }).then(done).catch(done);
-  // });
-
+  it("new member should not be special", function(done) {
+    var access = Access.deployed();
+    access.addMember(accounts[1], false, {from: accounts[0]}).then(function() {
+      return access.member.call(accounts[1]);
+  	}).then(function(member) {
+  	  assert.equal(member[2], false, "member not set to special");
+	}).then(done).catch(done);
+  });
 
 });

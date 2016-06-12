@@ -7,13 +7,14 @@ contract Access {
     	uint joinDate;
     	bool exists;
 		bool isSpecial;
-   		address[] endorsements;
   	}
 
+  	event NewMember(address newMember, uint joinDate, bool exists, bool isSpecial);
+
   	function Access(){
-  		address[] memory endorsements;
-  		member[msg.sender] = Member(now, true, true, endorsements);
+  		member[msg.sender] = Member(now, true, true);
 		members.push(msg.sender);
+		NewMember(msg.sender, member[msg.sender].joinDate, member[msg.sender].exists, member[msg.sender].isSpecial);
   	}
 
   	modifier onlySpecial {
@@ -23,10 +24,13 @@ contract Access {
       _
   	}
 
-  	function addMember(address nominee, bool isSpecial) onlySpecial returns (bool success){
-  		address[] memory endorsements;
-  		member[nominee] = Member(now, true, isSpecial, endorsements);
-		members.push(nominee);
-		return true;
+  	function addMember(address _nominee, bool _isSpecial) onlySpecial returns (bool success){
+  		if(!member[_nominee].exists){
+  			member[_nominee] = Member(now, true, _isSpecial);
+			members.push(_nominee);
+			NewMember(_nominee, member[_nominee].joinDate, member[_nominee].exists, member[_nominee].isSpecial);
+			return true;
+  		}
+		return false;
   	}
 }

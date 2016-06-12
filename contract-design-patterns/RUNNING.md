@@ -1,3 +1,11 @@
+## Install npm packages from package.json
+
+This just installs web3;
+
+```
+npm install
+```
+
 ## Installing testrpc
 
 ```

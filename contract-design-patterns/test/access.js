@@ -48,7 +48,6 @@ contract('Access', function(accounts) {
 
   it("should be able to recieve funds", function(done) {
     var access = Access.deployed();
-    //console.log(access);
     var amount = 1000000;
     var Web3 = require('web3');
     var web3 = new Web3();
@@ -57,6 +56,30 @@ contract('Access', function(accounts) {
     var balance = web3.eth.getBalance(access.address);
     assert.equal(balance.toNumber(), amount, "funds not recieved");
     done();
+  });
+
+  it("special members should be able to spend contract funds", function(done) {
+    var access = Access.deployed();
+    var amount = 1000000;
+    var starting_balance = web3.eth.getBalance("0x4a0c65869f0b320d3720af59b891709284224985");
+
+    access.spend('0x4a0c65869f0b320d3720af59b891709284224985', amount, {from: accounts[0]}).then(function() {
+      var ending_balance = web3.eth.getBalance("0x4a0c65869f0b320d3720af59b891709284224985");
+      assert.equal(ending_balance - starting_balance, amount, 'funds not transfered');
+  	}).then(done).catch(done);
+  });
+
+  it("ordinary members should not be able to spend contract funds", function(done) {
+    var access = Access.deployed();
+    var amount = 1000000;
+    var starting_balance = web3.eth.getBalance("0x4a0c65869f0b320d3720af59b891709284224985");
+
+    access.addMember(accounts[1], false, {from: accounts[0]}).then(function() {
+      return access.spend('0x4a0c65869f0b320d3720af59b891709284224985', amount, {from: accounts[1]});
+  	}).then(function() {
+      var ending_balance = web3.eth.getBalance("0x4a0c65869f0b320d3720af59b891709284224985");
+      assert.equal(ending_balance - starting_balance, 0, 'funds transfered when they should not have');
+  	}).then(done).catch(done);
   });
 
 });

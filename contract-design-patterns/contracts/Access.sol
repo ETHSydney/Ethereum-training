@@ -19,10 +19,9 @@ contract Access {
   	}
 
   	modifier onlySpecial {
-      if (!member[msg.sender].isSpecial) {
-        throw;
+      if (member[msg.sender].isSpecial) {
+        _
       }
-      _
   	}
 
   	function addMember(address _nominee, bool _isSpecial) onlySpecial returns (bool success){

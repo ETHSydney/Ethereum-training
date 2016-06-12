@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "web3": "^0.17.0-alpha"
+  },
+  "devDependencies": {},
+  "name": "contract-design-patterns",
+  "description": "A solidity tutorial"
+}

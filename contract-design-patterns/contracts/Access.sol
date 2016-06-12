@@ -1,3 +1,7 @@
+/// @author hugooconnor
+/// @title A simple shared account to demo some features of solidity
+/// see how to document solidity code; https://github.com/ethereum/wiki/wiki/Ethereum-Natural-Specification-Format
+
 contract Access {
 
 	/**
@@ -41,12 +45,10 @@ contract Access {
       }
   	}
 
-  	/**
-	 * Adds new members or sets existing members to special, onlySpecial can call
-	 * @param {address} _nominee 
-	 * @param {bool} _isSpecial
-	 * @return {bool} success
-	 */
+	/// @notice Adds new members or sets existing members to special, onlySpecial can call
+	/// @param _nominee the person we are adding as a member
+	///	@param _isSpecial if they are special or not
+	/// @return success if state changes
   	function addMember(address _nominee, bool _isSpecial) onlySpecial returns (bool success){
   		if(!member[_nominee].exists){
   			member[_nominee] = Member(now, true, _isSpecial);
@@ -60,12 +62,10 @@ contract Access {
 		return false;
   	}
 
-  	/**
-	 * Spends contract funds, onlySpecial can call
-	 * @param {address} _recipient 
-	 * @param {uint} _amount
-	 * @return {bool} success
-	 */
+	/// @notice Spends contract funds, onlySpecial can call
+	/// @param _recipient who is recieving the funds
+	/// @param _amount how much they are getting
+	/// @return success if funds are sent
   	function spend(address _recipient, uint _amount) onlySpecial returns (bool success){
   		if(this.balance >= _amount){
   			_recipient.send(_amount);

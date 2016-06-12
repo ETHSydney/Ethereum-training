@@ -10,6 +10,7 @@ contract Access {
   	}
 
   	event NewMember(address newMember, uint joinDate, bool exists, bool isSpecial);
+  	event Spend(address recipient, uint amount);
 
   	function Access(){
   		member[msg.sender] = Member(now, true, true);
@@ -32,5 +33,15 @@ contract Access {
 			return true;
   		}
 		return false;
+  	}
+
+  	function spend(address _recipient, uint _amount) onlySpecial returns (bool success){
+  		if(this.balance >= _amount){
+  			_recipient.send(_amount);
+  			Spend(_recipient, _amount);
+  			return true;
+  		} else {
+  			return false;
+  		}
   	}
 }

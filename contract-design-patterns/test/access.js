@@ -46,4 +46,17 @@ contract('Access', function(accounts) {
 	}).then(done).catch(done);
   });
 
+  it("should be able to recieve funds", function(done) {
+    var access = Access.deployed();
+    //console.log(access);
+    var amount = 1000000;
+    var Web3 = require('web3');
+    var web3 = new Web3();
+    web3.setProvider(new web3.providers.HttpProvider('http://localhost:8545'));    
+    web3.eth.sendTransaction({from: accounts[0], to: access.address, value: amount});
+    var balance = web3.eth.getBalance(access.address);
+    assert.equal(balance.toNumber(), amount, "funds not recieved");
+    done();
+  });
+
 });

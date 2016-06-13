@@ -28,6 +28,7 @@ contract Access {
 	 * Events: a cheaper option than storing all data on chain
 	 * NewMember -- will call when new member joins
 	 * Spend -- will call when contract funds spent
+   * Transfer -- will call when token is transfered
 	 */
   event NewMember(address admin, address newMember, uint joinDate, bool exists, bool isSpecial);
   event Spend(uint date, address recipient, uint amount);

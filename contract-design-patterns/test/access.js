@@ -1,6 +1,18 @@
-use 'strict';
-
 contract('Access', function(accounts) {
+
+  it("should issue 1000 tokens to the creator", function(done) {
+    var access = Access.deployed();
+    access.balanceOf(accounts[0], {from: accounts[0]}).then(function(balance) {
+      assert.equal(balance.toNumber(), 1000, 'initial 1000 tokens not issued to creator');
+    }).then(done).catch(done);
+  });
+
+  it("should have initial supply of 1000 tokens", function(done) {
+    var access = Access.deployed();
+    access.totalSupply().then(function(balance) {
+      assert.equal(balance.toNumber(), 1000, 'initial 1000 tokens not accounted for');
+    }).then(done).catch(done);
+  });
 
   it("should set initial member for accounts[0] on contract instantiation", function(done) {
     var access = Access.deployed();
@@ -93,6 +105,18 @@ contract('Access', function(accounts) {
       var ending_balance = web3.eth.getBalance("0x4a0c65869f0b320d3720af59b891709284224985");
       assert.equal(ending_balance - starting_balance, 0, 'funds transfered when they should not have');
   	}).then(done).catch(done);
+  });
+
+  it("should be able to transfer tokens", function(done) {
+    var access = Access.deployed();
+    access.transfer(accounts[2], 1000, {from: accounts[0]}).then(function(result) {
+      return access.balanceOf(accounts[2]);
+    }).then(function(balance) {
+      //console.log('account 2 balance', balance.toNumber());
+      return access.balanceOf(accounts[0]);
+    }).then(function(balance) {
+      assert.equal(balance.toNumber(), 0, 'funds not transfered');
+    }).then(done).catch(done);
   });
 
 });

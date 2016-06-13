@@ -1,5 +1,5 @@
 /// @author hugooconnor
-/// @title A simple shared account to demo some features of solidity
+/// @title A shared account to demo some features of solidity, with standard tokens
 /// see how to document solidity code; https://github.com/ethereum/wiki/wiki/Ethereum-Natural-Specification-Format
 
 contract Access {
@@ -9,6 +9,8 @@ contract Access {
 	 * members -- an array of addresses, useful for looping over
 	 * member -- a mapping of addresses to Member objects
 	 * Member -- a struct containing member details
+   * tokenSupply -- how many tokens on issue
+   * tokens -- mapping of addresses to tokens
 	 */
   address[] public members;
   mapping(address => Member) public member;
@@ -83,14 +85,23 @@ contract Access {
   		}
   }
 
+  /// @notice Gets total supply of issued tokens
+  /// @return supply how many tokens are on issue
   function totalSupply() constant returns (uint256 supply){
     return tokenSupply;
   }
 
+  /// @notice Gets the token balance of an address
+  /// @param _owner whose address are we looking up
+  /// @return balance how many tokens they have
   function balanceOf(address _owner) constant returns (uint256 balance){
     return tokens[_owner];
   }
 
+  /// @notice transfers tokens between users
+  /// @param _to who is the transfer to
+  /// @param _value how many tokens are they transferring
+  /// @return success if the transfer is successful or not
   function transfer(address _to, uint256 _value) returns (bool success){
     if(tokens[msg.sender] >= _value){
       tokens[msg.sender] -= _value;
@@ -98,9 +109,5 @@ contract Access {
       return true;
     }
     return false;
-  }
-
-  function memberLength() returns (uint length){
-    return members.length;
   }
 }

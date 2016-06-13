@@ -119,4 +119,20 @@ contract('Access', function(accounts) {
     }).then(done).catch(done);
   });
 
+  it("should not transfer tokens above the balance held", function(done) {
+    var access = Access.deployed();
+    access.transfer.call(accounts[0], 10000, {from: accounts[1]}).then(function(result) {
+      assert.equal(result, false, 'funds transfered when they should not have');
+    }).then(done).catch(done);
+  });
+
+  it("should transfer the balance held", function(done) {
+    var access = Access.deployed();
+    access.balanceOf.call(accounts[1]).then(function(balance) {
+      return access.transfer.call(accounts[0], balance, {from: accounts[1]});
+    }).then(function(result) {
+      assert.equal(result, true, 'funds not transfered when they should have');
+    }).then(done).catch(done);
+  });
+
 });

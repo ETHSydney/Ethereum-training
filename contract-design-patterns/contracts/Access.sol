@@ -29,8 +29,9 @@ contract Access {
 	 * NewMember -- will call when new member joins
 	 * Spend -- will call when contract funds spent
 	 */
-  event NewMember(address newMember, uint joinDate, bool exists, bool isSpecial);
+  event NewMember(address admin, address newMember, uint joinDate, bool exists, bool isSpecial);
   event Spend(uint date, address recipient, uint amount);
+  event Transfer(uint date, address sender, address recipient, uint amount);
 
 	/**
 	 * Constructor -- adds msg.sender to membership, sets them as special
@@ -38,7 +39,7 @@ contract Access {
   function Access(){
         member[msg.sender] = Member(now, true, true);
         members.push(msg.sender);
-        NewMember(msg.sender, member[msg.sender].joinDate, member[msg.sender].exists, member[msg.sender].isSpecial);
+        NewMember(msg.sender, msg.sender, member[msg.sender].joinDate, member[msg.sender].exists, member[msg.sender].isSpecial);
         tokens[msg.sender] += 1000;
         tokenSupply += 1000;
   }
@@ -62,7 +63,7 @@ contract Access {
             members.push(_nominee);
             tokens[_nominee] += 1000;
             tokenSupply += 1000;
-            NewMember(_nominee, member[_nominee].joinDate, member[_nominee].exists, member[_nominee].isSpecial);
+            NewMember(msg.sender, _nominee, member[_nominee].joinDate, member[_nominee].exists, member[_nominee].isSpecial);
             return true;
   		} else if (member[_nominee].exists && _isSpecial){
             member[_nominee].isSpecial = _isSpecial;
@@ -106,6 +107,7 @@ contract Access {
     if(tokens[msg.sender] >= _value){
       tokens[msg.sender] -= _value;
       tokens[_to] += _value;
+      Transfer(now, msg.sender, _to, _value);
       return true;
     }
     return false;

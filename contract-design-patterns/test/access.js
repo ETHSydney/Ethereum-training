@@ -1,3 +1,5 @@
+use 'strict';
+
 contract('Access', function(accounts) {
 
   it("should set initial member for accounts[0] on contract instantiation", function(done) {

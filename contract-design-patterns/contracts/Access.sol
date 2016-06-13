@@ -10,13 +10,13 @@ contract Access {
 	 * member -- a mapping of addresses to Member objects
 	 * Member -- a struct containing member details
 	 */
-	address[] public members;
+    address[] public members;
   	mapping(address => Member) public member;
 
 	struct Member {
-    	uint joinDate;
-    	bool exists;
-		bool isSpecial;
+        uint joinDate;
+        bool exists;
+        bool isSpecial;
   	}
 
   	/**
@@ -31,9 +31,9 @@ contract Access {
 	 * Constructor -- adds msg.sender to membership, sets them as special
 	 */
   	function Access(){
-  		member[msg.sender] = Member(now, true, true);
-		members.push(msg.sender);
-		NewMember(msg.sender, member[msg.sender].joinDate, member[msg.sender].exists, member[msg.sender].isSpecial);
+        member[msg.sender] = Member(now, true, true);
+        members.push(msg.sender);
+        NewMember(msg.sender, member[msg.sender].joinDate, member[msg.sender].exists, member[msg.sender].isSpecial);
   	}
 
   	/**
@@ -51,15 +51,15 @@ contract Access {
 	/// @return success if state changes
   	function addMember(address _nominee, bool _isSpecial) onlySpecial returns (bool success){
   		if(!member[_nominee].exists){
-  			member[_nominee] = Member(now, true, _isSpecial);
-			members.push(_nominee);
-			NewMember(_nominee, member[_nominee].joinDate, member[_nominee].exists, member[_nominee].isSpecial);
-			return true;
+            member[_nominee] = Member(now, true, _isSpecial);
+            members.push(_nominee);
+            NewMember(_nominee, member[_nominee].joinDate, member[_nominee].exists, member[_nominee].isSpecial);
+            return true;
   		} else if (member[_nominee].exists && _isSpecial){
-  			member[_nominee].isSpecial = _isSpecial;
-  			return true;
+            member[_nominee].isSpecial = _isSpecial;
+            return true;
   		}
-		return false;
+        return false;
   	}
 
 	/// @notice Spends contract funds, onlySpecial can call
@@ -68,11 +68,11 @@ contract Access {
 	/// @return success if funds are sent
   	function spend(address _recipient, uint _amount) onlySpecial returns (bool success){
   		if(this.balance >= _amount){
-  			_recipient.send(_amount);
-  			Spend(now, _recipient, _amount);
-  			return true;
+            _recipient.send(_amount);
+            Spend(now, _recipient, _amount);
+            return true;
   		} else {
-  			return false;
+            return false;
   		}
   	}
 }

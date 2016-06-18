@@ -61,8 +61,8 @@ contract SomeContractName {
 }
 ```
 
-### local variabled
-Are stored in memory rather than persisted into the contracts storage
+### Local variables
+Data is stored in memory rather than persisted into the contracts state. That is, it's not saved into the distributed ledgers.
 
 ### Types
 Solidity is a statically typed language which means the type of data stored in a variable needs to know at compile time. This is the opposite todynamically typed languages like JavaScript.
@@ -235,8 +235,62 @@ contract TestInfer {
 }
 ```
 
-### Constructor
+### Functions
+function can have no arguments or return types.
+functions can have one or more arguments of a specified type.
+functions can have one or more return types.
 
+```
+contract TestFunctions {
+    
+    bool public didSomething = false;
+    
+    function noArgFunction() {
+        // does nothing
+        didSomething = true;
+    }
+    
+    function oneArgFunction(bool arg1) {
+        didSomething = arg1;
+    }
+    
+    function add(int first, int second) returns (int result) {
+        return first + second;
+    }
+    
+    function div(int first, int second) returns (bool success, int result) {
+        if (second != 0)
+            return (true, first / second);
+        else
+            success = false;
+    }
+    
+    function testFunctions() returns (bool result, int answer) {
+        //return noArgFunction();
+        //return oneArgFunction(true);
+        
+        answer = add(1,2);
+        //return (true, answer);
+        
+        (result, answer) = div(2, 1);
+    }
+}
+```
+
+### Constructor
+Is a special function that is invoked when a contract is first deployed. This could be via a transaction or another contract.
+
+```
+contract TestConstructor {
+    
+    string public state;
+    bool public finished;
+    
+    function TestConstructor(string _state, bool someBool) {
+        state = _state;
+    }
+}
+```
 
 ### Loops
 Solidity for loops are like C.

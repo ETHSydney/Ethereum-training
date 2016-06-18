@@ -43,7 +43,7 @@ multi-line comment.
 If you have done Object Oriented programming before then a contract is really just a class. The different is instead of instantiating an object in memory, a contract instantiates a distributed object on the Ethereum blockchain.
 
 ```
-contract SomeContractName {
+contract TestContract {
 
 }
 ```
@@ -55,7 +55,7 @@ Note Truffle expects the name of the contract to match the filename which is cas
 ### State Variables
 are values which are permanently stored in contract storage.
 ```
-contract SomeContractName {
+contract TestStateVariables {
     int someInt;
     bool someBool;
 }
@@ -157,7 +157,6 @@ contract TestIntegers {
 }
 ```
 
-
 #### Addresses
 
 ```
@@ -184,6 +183,35 @@ contract TestAddresses {
     
     function testGetBalance() returns (uint256 result) {
         return largestAddress.balance; // 0
+    }
+}
+```
+
+#### Mappings
+Depending on what language you are use to, a mapping is a hashmap, dictionary or associative array.
+
+```
+contract TestMappings {
+    
+    mapping (uint => string) public testUintStringMap;
+    mapping (address => string) public testAddressStringMap;
+    
+    function TestMappings() {
+        testAddressStringMap[this] = "this contract";
+        testAddressStringMap[msg.sender] = "message sender";
+    }
+    
+    function testSetMapping() {
+        testUintStringMap[0] = "zero";
+        testUintStringMap[1] = "one";
+    }
+    
+    function testGetStringFromUint(uint index) returns (string result) {
+        return testUintStringMap[index];
+    }
+    
+    function testGetStringFromAddress(address _address) returns (string result) {
+        return testAddressStringMap[_address];
     }
 }
 ```
@@ -277,6 +305,40 @@ contract TestFunctions {
 }
 ```
 
+#### Function modifiers
+
+```
+contract TestFunctionModifiers {
+    
+    function privateFunction() private constant returns (string result) {
+        return "private";
+    }
+    
+    function testPrivate() returns (string result) {
+        return privateFunction();
+    }
+    
+    function publicFunction() public returns (string result) {
+        return "public";
+    }
+    
+    function testPublic() returns (string result) {
+        return publicFunction();
+    }
+    
+    function externalFunction() external returns (bool result) {
+        return true;
+    }
+    
+    function testExteranl() returns (bool result) {
+        //return externalFunction();
+        return this.externalFunction();
+    }
+    
+    // internal
+}
+```
+
 ### Constructor
 Is a special function that is invoked when a contract is first deployed. This could be via a transaction or another contract.
 
@@ -288,6 +350,29 @@ contract TestConstructor {
     
     function TestConstructor(string _state, bool someBool) {
         state = _state;
+    }
+}
+```
+
+### Events
+
+```
+contract TestEvents {
+    
+    event EmitAString(string something);
+    event EmitSomeNumbers(int first, int second);
+    event EmitAddresses(address thisContract, address transactionInvoker);
+    
+    function testEmitSomeString() {
+        EmitAString("hello world");
+    }
+    
+    function testEmitSomeNumbers() {
+        EmitSomeNumbers(1, 2);
+    }
+    
+    function testEmitAddresses() {
+        EmitAddresses(this, msg.sender);
     }
 }
 ```

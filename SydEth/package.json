@@ -1,0 +1,11 @@
+{
+	"name": "testApp",
+	"private": true,
+	"scripts": {
+		"start": "meteor run"
+	},
+	"dependencies": {
+		"meteor-node-stubs": "~0.2.0",
+		"web3": "^0.17.0-alpha"
+	}
+}

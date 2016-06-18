@@ -158,7 +158,7 @@ contract TestIntegers {
 ```
 
 #### Addresses
-
+Is a 20 byte number in hexadecimal format.
 ```
 contract TestAddresses {
     
@@ -354,30 +354,89 @@ contract TestConstructor {
 }
 ```
 
-### Events
+### Control Structures
 
+Covers `if`, `else`, `for`, `while`, `continue`, `break`, `return` 
 ```
-contract TestEvents {
+contract TestControlStructures {
     
-    event EmitAString(string something);
-    event EmitSomeNumbers(int first, int second);
-    event EmitAddresses(address thisContract, address transactionInvoker);
-    
-    function testEmitSomeString() {
-        EmitAString("hello world");
+    function testIf(int testNumber) returns (string result) {
+        
+        if (testNumber < 0) {
+            return "negative";
+        }
+        // brackets are not needed if only one line
+        else if (testNumber == 0)
+            return "zero";
+        else {
+            return "positive";
+        }
     }
     
-    function testEmitSomeNumbers() {
-        EmitSomeNumbers(1, 2);
+    function testForLoop(int[] numbers) returns (int sum) {
+        for (uint i = 0; i < numbers.length; i++) {
+            sum += numbers[i];
+        }
+        return sum;
     }
     
-    function testEmitAddresses() {
-        EmitAddresses(this, msg.sender);
+    function testForLoopBreakContinue(int[] numbers) returns (int sum) {
+        for (uint i = 0; i < numbers.length; i++) {
+            if (i % 2 == 1) {
+                continue;
+            }
+            
+            if (i == 4) {
+                break;
+            }
+            
+            sum += numbers[i];
+        }
+        return sum;
     }
+    
+    function testForLoopReturn(int[] numbers) returns (int sum) {
+        for (uint i = 0; i < numbers.length; i++) {
+            if (i == 2) {
+                return sum;
+            }
+            
+            sum += numbers[i];
+        }
+        return sum;
+    }
+    
+    function testWhileLoop(int[] numbers) returns (int sum) {
+        uint i = 0;
+        while (i < numbers.length) {
+            sum += numbers[i++];
+        }
+        
+        return sum;
+    }
+    
+    function testWhileBreakContinue(int[] numbers) returns (int sum) {
+        uint i = 0;
+        while (i < numbers.length) {
+            if (i % 2 == 1) {
+                continue;
+            }
+            
+            if (i == 4) {
+                break;
+            }
+            
+            sum += numbers[i++];
+        }
+        
+        return sum;
+    }
+    
+    function() {throw;}
 }
 ```
 
-### Loops
+#### For loops
 Solidity for loops are like C.
 ```
 contract LoopExample {
@@ -399,6 +458,29 @@ contract LoopExample {
         for (var i = 0; i < numbers.length; i++) {
             sum += numbers[i];
         }
+    }
+}
+```
+
+### Events
+
+```
+contract TestEvents {
+    
+    event EmitAString(string something);
+    event EmitSomeNumbers(int first, int second);
+    event EmitAddresses(address thisContract, address transactionInvoker);
+    
+    function testEmitSomeString() {
+        EmitAString("hello world");
+    }
+    
+    function testEmitSomeNumbers() {
+        EmitSomeNumbers(1, 2);
+    }
+    
+    function testEmitAddresses() {
+        EmitAddresses(this, msg.sender);
     }
 }
 ```

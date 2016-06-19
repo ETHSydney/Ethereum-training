@@ -2,14 +2,20 @@ import {
 	Template
 } from 'meteor/templating';
 
-const contractInstance = web3.eth.contract(Session.get('contractAbi')).at(Session.get('contractAddress'));
-const events = contractInstance.allEvents({
-	fromBlock: 0,
-	toBlock: 'latest'
-});
-events.watch(function(error, result) {
-	console.log(web3.toAscii(result.args.beneficiaryName), web3.toAscii(result.args.courseName), );
-});
+let contractInstance;
+let events;
+
+
+if (typeof Session.get('contractAbi') != 'undefined' && typeof Session.get('contractAddress') != 'undefined') {
+	contractInstance = web3.eth.contract(Session.get('contractAbi')).at(Session.get('contractAddress'));
+	events = contractInstance.allEvents({
+		fromBlock: 0,
+		toBlock: 'latest'
+	});
+	events.watch(function(error, result) {
+		console.log(web3.toAscii(result.args.beneficiaryName), web3.toAscii(result.args.courseName), );
+	});
+}
 
 Template.uploadForm.helpers({
 	contractAddress: function() {

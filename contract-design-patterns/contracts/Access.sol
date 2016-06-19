@@ -79,9 +79,11 @@ contract Access {
 	/// @return success if funds are sent
   function spend(address _recipient, uint _amount) onlySpecial returns (bool success){
   		if(this.balance >= _amount){
-            _recipient.send(_amount);
-            SpendLog(now, _recipient, _amount);
-            return true;
+            if(_recipient.send(_amount)){
+              SpendLog(now, _recipient, _amount);
+              return true;
+            }
+            return false;
   		} else {
             return false;
   		}

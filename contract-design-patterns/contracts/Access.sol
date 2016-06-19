@@ -25,14 +25,14 @@ contract Access {
   mapping(address => uint) public tokens;
 
   	/**
-	 * Events: a cheaper option than storing all data on chain
+	 * Events: a cheaper option than storing all data on chain - append Log to events for clarity
 	 * NewMember -- will call when new member joins
 	 * Spend -- will call when contract funds spent
    * Transfer -- will call when token is transfered
 	 */
-  event NewMember(address admin, address newMember, uint joinDate, bool exists, bool isSpecial);
-  event Spend(uint date, address recipient, uint amount);
-  event Transfer(uint date, address sender, address recipient, uint amount);
+  event NewMemberLog(address admin, address newMember, uint joinDate, bool exists, bool isSpecial);
+  event SpendLog(uint date, address recipient, uint amount);
+  event TransferLog(uint date, address sender, address recipient, uint amount);
 
 	/**
 	 * Constructor -- adds msg.sender to membership, sets them as special
@@ -40,7 +40,7 @@ contract Access {
   function Access(){
         member[msg.sender] = Member(now, true, true);
         members.push(msg.sender);
-        NewMember(msg.sender, msg.sender, member[msg.sender].joinDate, member[msg.sender].exists, member[msg.sender].isSpecial);
+        NewMemberLog(msg.sender, msg.sender, member[msg.sender].joinDate, member[msg.sender].exists, member[msg.sender].isSpecial);
         tokens[msg.sender] += 1000;
         tokenSupply += 1000;
   }
@@ -64,7 +64,7 @@ contract Access {
             members.push(_nominee);
             tokens[_nominee] += 1000;
             tokenSupply += 1000;
-            NewMember(msg.sender, _nominee, member[_nominee].joinDate, member[_nominee].exists, member[_nominee].isSpecial);
+            NewMemberLog(msg.sender, _nominee, member[_nominee].joinDate, member[_nominee].exists, member[_nominee].isSpecial);
             return true;
   		} else if (member[_nominee].exists && _isSpecial){
             member[_nominee].isSpecial = _isSpecial;
@@ -79,9 +79,11 @@ contract Access {
 	/// @return success if funds are sent
   function spend(address _recipient, uint _amount) onlySpecial returns (bool success){
   		if(this.balance >= _amount){
-            _recipient.send(_amount);
-            Spend(now, _recipient, _amount);
-            return true;
+            if(_recipient.send(_amount)){
+              SpendLog(now, _recipient, _amount);
+              return true;
+            }
+            return false;
   		} else {
             return false;
   		}
@@ -108,7 +110,7 @@ contract Access {
     if(tokens[msg.sender] >= _value){
       tokens[msg.sender] -= _value;
       tokens[_to] += _value;
-      Transfer(now, msg.sender, _to, _value);
+      TransferLog(now, msg.sender, _to, _value);
       return true;
     }
     return false;

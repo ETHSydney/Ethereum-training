@@ -23,20 +23,34 @@ contract('Errors', function(accounts) {
   //   }).then(done).catch(done);
   // });
 
-  it("should run out of gas", function(done) {
+  it("should run out of gas? -- 100", function(done) {
     var errors = Errors.deployed();
-    errors.bigLoop.call().then(function(result) {
-      console.log(result);
+    errors.bigLoop(100).then(function(result) {
+      //console.log(result);
+    }).then(done).catch(done);
+  });
+
+  it("should run out of gas? -- 500", function(done) {
+    var errors = Errors.deployed();
+    errors.bigLoop(500).then(function(result) {
+      //console.log(result);
+    }).then(done).catch(done);
+  });
+
+  it("should run out of gas? -- 1000", function(done) {
+    var errors = Errors.deployed();
+    errors.bigLoop(1000).then(function(result) {
+      //console.log(result);
     }).then(done).catch(done);
   });
 
 
-  it("should produce invalid jump error", function(done) {
-    var errors = Errors.deployed();
-    errors.numbersFixed.call(10).then(function(result) {
-      console.log(result);
-      // assert.equal(result.toNumber(), 0, 'divide by zero doesnt return 0');
-    }).then(done).catch(done);
-  });
+  // it("should produce invalid jump error", function(done) {
+  //   var errors = Errors.deployed();
+  //   errors.numbersFixed.call(10).then(function(result) {
+  //     console.log(result);
+  //     // assert.equal(result.toNumber(), 0, 'divide by zero doesnt return 0');
+  //   }).then(done).catch(done);
+  // });
 
 });

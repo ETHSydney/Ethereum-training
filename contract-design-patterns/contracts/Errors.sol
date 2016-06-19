@@ -28,13 +28,8 @@ contract Errors {
         return numbersDynamic[index];
     }
 
-    function bigLoop() returns (uint result){
-        uint num = 1000000000;
-        uint num2 = 100000;
-        uint num3 = 10000;
-        uint num4 = 1000;
-        uint num5 = 500;
-        for(uint i=0; i < num5; i++){
+    function bigLoop(uint loopSize) returns (uint result){
+        for(uint i=0; i < loopSize; i++){
             numbersFixed[0] = i; // see http://ether.fund/tool/gas-fees
         }
         return numbersFixed[0];

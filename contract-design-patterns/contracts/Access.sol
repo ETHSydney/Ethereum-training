@@ -58,19 +58,19 @@ contract Access {
 	/// @param _nominee the person we are adding as a member
 	///	@param _isSpecial if they are special or not
 	/// @return success if state changes
-  function addMember(address _nominee, bool _isSpecial) onlySpecial returns (bool success){
+  function addMember(address _nominee, bool _setSpecial) onlySpecial returns (bool success){
   		if(!member[_nominee].exists){
-            member[_nominee] = Member(now, true, _isSpecial);
+            member[_nominee] = Member(now, true, _setSpecial);
             members.push(_nominee);
             tokens[_nominee] += 1000;
             tokenSupply += 1000;
             NewMemberLog(msg.sender, _nominee, member[_nominee].joinDate, member[_nominee].exists, member[_nominee].isSpecial);
             return true;
-  		} else if (member[_nominee].exists && _isSpecial){
-            member[_nominee].isSpecial = _isSpecial;
+  		} else if (member[_nominee].exists && _setSpecial){
+            member[_nominee].isSpecial = _setSpecial;
             return true;
   		}
-        return false;
+      return false;
   }
 
 	/// @notice Spends contract funds, onlySpecial can call
@@ -79,11 +79,11 @@ contract Access {
 	/// @return success if funds are sent
   function spend(address _recipient, uint _amount) onlySpecial returns (bool success){
   		if(this.balance >= _amount){
-            if(_recipient.send(_amount)){
+          if(_recipient.send(_amount)){
               SpendLog(now, _recipient, _amount);
               return true;
-            }
-            return false;
+          }
+          return false;
   		} else {
             return false;
   		}

@@ -1,23 +1,42 @@
 # Solidity 101
+Solidity is a high-level that compiles to the Ethereum Virtual Machine (EVM) assembly code. 
 
-## Compiling
+## Documenation
+* [Solidity documentation](http://solidity.readthedocs.io/en/latest/)
+
+## Editoring, compiling and deployment tools
+
 ### browser-solidity
-You can write and compile solidity code using [browser-solidity](https://ethereum.github.io/browser-solidity/) which does not need any installation.
+You can write and compile solidity code using [browser-solidity](https://ethereum.github.io/browser-solidity/) which does not need any software installed on your machine.
+
+### VS Code Editor
+Microsoft's Visual Studio Code
+https://code.visualstudio.com/
+
+Solidity extension
+https://marketplace.visualstudio.com/items?itemName=JuanBlanco.solidity
+
+Setting up compile keyboard shortcuts
+https://gist.github.com/naddison36/1b4301c15ee1cb8ae31efcd7c69a2218
 
 ### solc-js
 A Javascript compiler for Solidity
 https://github.com/ethereum/solc-js
 that can be installed on your local machine with `npm install -g solc`
 
-To compile a file `solc filename.sol`
+Some example commands:
+* compile a file `solc filename.sol`
+* compile every file in a folder `solc *`
+* generate a Application Binary Interface (ABI) spec in JSON format `solc --abi filename.sol`
 
-To compile everything in a folder `solc *`
+### Truffle
+Is a JavaScript compile, deployment and testing tool.
+https://github.com/ConsenSys/truffle 
 
 ## Coding
 
 ### Files
-Solidity files have a `.sol` extension.
-
+Solidity files have a `.sol` extension. Note that Truffle expects the file name to be the same as the contract name. The [Solidity style guide](http://solidity.readthedocs.io/en/latest/style-guide.html) states contracts should be named using the CapWords so the filenames should also be capitalised words. eg ContractName.sol 
 
 ### Comments
 are like many other languages
@@ -29,7 +48,7 @@ This is a
 multi-line comment.
 */
 ```
-[NatSpec](http://www.nat-spec.com/) comments are supported but not yet documented
+[NatSpec](http://www.nat-spec.com/) comments are supported but not yet documented in the Solidity docs. To generate, use either the `--userdoc` or `--devdoc` output components of `solc`.
 ```
 /// triple slash
 
@@ -50,24 +69,10 @@ contract TestContract {
 
 The solidity style guide states [contract and library names should be in CapitalizedWords style](http://solidity.readthedocs.io/en/latest/style-guide.html#contract-and-library-names). 
 
-Note Truffle expects the name of the contract to match the filename which is case sensitive on Mac and Linux.
-
-### State Variables
-are values which are permanently stored in contract storage.
-```
-contract TestStateVariables {
-    int someInt;
-    bool someBool;
-}
-```
-
-### Local variables
-Data is stored in memory rather than persisted into the contracts state. That is, it's not saved into the distributed ledgers.
-
 ### Types
-Solidity is a statically typed language which means the type of data stored in a variable needs to know at compile time. This is the opposite todynamically typed languages like JavaScript.
+Solidity is a statically typed language which means the type of data stored in a variable needs to know at compile time. This is the opposite to dynamically typed languages like JavaScript.
 
-#### Values Types
+#### Value Types
 Value types are copied when they are used as function arguments or in assignments.
 
 #### Booleans
@@ -101,29 +106,29 @@ Keywords `uint8` to `uint256` in steps of 8 (unsigned of 8 up to 256 bits) and `
 
 `uint` = `uint256` and is only a positive number including zero. The leading bit that indicated positive or negative sign is dropped.
 
-There are no floating point numbers as float operations are not deterministic. eg 0.1 + 0.2 != 0.3
+There currently is no support for floating point numbers they are difficult to be deterministic. eg run node and enter `0.1 + 0.2` which will not equal `0.3`.
 
 ```
 contract TestIntegers {
     
     function testInt8() returns (int8 result) {
+        // 2 to the power of 7 minus 1 is the highest int8
         return 2 ** 7 - 1; // 127
     }
     
     function testUint8() returns (uint8 result) {
+        // 2 to the power of 8 minus 1 is the highest uint8
         return 2 ** 8 - 1; // 255
     }
     
     function testInt16() returns (int16 result) {
+        // 2 to the power of 15 minus 1 is the highest int8
         return 2 ** 15 - 1; // 32767
     }
     
-    function testInt24() returns (int24 result) {
-        return 2 ** 23 - 1; // 8388607
-    }
-    
-    function testInt32() returns (int32 result) {
-        return 2 ** 31 - 1; // 2147483647
+    function testInt24() returns (uint24 result) {
+        // 2 to the power of 24 minus 1 is the highest uint24
+        return 2 ** 24 - 1; // 16777215
     }
     
     function testInt64() returns (int64 result) {
@@ -135,10 +140,12 @@ contract TestIntegers {
     }
     
     function testOperations() returns (int64 result) {
+        // like normal maths, * and / are executed before + and -
         return 1 + 2 - 3 * 4 / 3; // -1 not 0
     }
     
     function testMod() returns (int8 result) {
+        // calculates the remainder of a division
         return 9 % 4;   // remainder of 9 / 4 = 1
     }
     
@@ -147,9 +154,11 @@ contract TestIntegers {
     }
     
     function testFractions() returns (int result) {
-        return 0.1 + 0.9; // 1
+        return 0.1 + 0.9; // is supported
+        //return 0.1 + 0.2; // is not supported
     }
     
+    // division is truncated to integers
     function testDivTruc() returns (int result) {
         int testInt = 1;
         return 3 * testInt / 4; // 0 not 0.75 or 1
@@ -158,7 +167,7 @@ contract TestIntegers {
 ```
 
 #### Addresses
-Is a 20 byte number in hexadecimal format.
+An address is a 20 byte number. In hexadecimal format with is 40 characters as 16 takes up 4 bits.
 ```
 contract TestAddresses {
     
@@ -227,8 +236,30 @@ contract ArrayExample {
 }
 ```
 
+#### Bytes
+
+
 #### Strings
 
+
+#### State Variables
+are values which are permanently stored in contract storage.
+```
+contract TestStateVariables {
+    int someInt;
+    bool someBool;
+}
+```
+
+#### Local variables
+Data is stored in memory rather than persisted into the contracts state. That is, it's not saved into the distributed ledgers.
+
+```
+contract TestStateVariables {
+    int someInt;
+    bool someBool;
+}
+```
 
 #### Pass by value
 
@@ -247,7 +278,6 @@ contract TestValueType {
     }
 }
 ```
-
 
 #### Type inference
 Variable types can be inferred when they are initialised at declaration.
@@ -513,7 +543,7 @@ contract LoopExample {
 ```
 
 ### Events
-
+Are the only way a contract can interact with the outside world. Data is emitted out of the blockchain via an event. An external process needs to register to receive events from an ethereum node/client.
 ```
 contract TestEvents {
     
@@ -548,3 +578,7 @@ contract SomeContractName {
     function() { throw; }
 }
 ```
+
+## Support
+* [Ethereum Stack Exchange for Solidity](https://ethereum.stackexchange.com/questions/tagged/solidity)
+* [Gitter](https://gitter.im/ethereum/solidity/)

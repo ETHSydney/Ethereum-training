@@ -7,7 +7,7 @@ module.exports = {
 		"app.css": [
 			"stylesheets/app.css"
 		],
-		"images/": "images/"
+	//	"images/": "images/"
 	},
 	deploy: [
 		// "MetaCoin",

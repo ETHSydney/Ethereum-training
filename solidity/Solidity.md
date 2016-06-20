@@ -307,6 +307,7 @@ contract TestFunctions {
 
 #### Calling functions on other contracts
 There are two ways to call another contract
+
 1. your contract instantiates the contract. See TestMath.createNewMathContract() below
 2. you cast the address of an existing contract. See TestMath.setMathContract(address) below
 

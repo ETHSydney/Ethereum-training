@@ -4,7 +4,7 @@ Solidity is a high-level that compiles to the Ethereum Virtual Machine (EVM) ass
 ## Documenation
 * [Solidity documentation](http://solidity.readthedocs.io/en/latest/)
 
-## Editoring, compiling and deployment tools
+## Editing, compiling and deployment tools
 
 ### browser-solidity
 You can write and compile solidity code using [browser-solidity](https://ethereum.github.io/browser-solidity/) which does not need any software installed on your machine.
@@ -240,6 +240,9 @@ contract ArrayExample {
 
 
 #### Strings
+
+
+#### Struct
 
 
 #### State Variables

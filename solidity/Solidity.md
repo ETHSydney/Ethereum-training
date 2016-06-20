@@ -305,6 +305,55 @@ contract TestFunctions {
 }
 ```
 
+#### Calling functions on other contracts
+There are two ways to call another contract
+1. your contract instantiates the contract. See TestMath.createNewMathContract() below
+2. you cast the address of an existing contract. See TestMath.setMathContract(address) below
+
+```
+contract Math {
+    
+    // a simple function to be called from another contract
+    function add(int a, int b) returns (int result) {
+        return a + b;
+    }
+    
+    // used to validate that an address implements the getMathAddress method hence is of type Math
+    function getMathAddress() returns (address result) {
+        return this;
+    }
+}
+
+contract TestMath {
+    
+    Math public math;
+    
+    function TestMaths() {
+        math = new Math();
+    }
+    
+    function testAdd() returns (int result) {
+        return math.add(1, 2);
+    }
+    
+    function setMathContract(address mathContractAddress) returns (bool success) {
+        
+        // attempt to cast the contract address to a Math contract
+        var mathInstance = Math(mathContractAddress);
+        
+        // validate the address is of type Math
+        if (mathInstance.getMathAddress() == mathContractAddress) {
+            math = mathInstance;
+            return true;
+        }
+    }
+    
+    function createNewMathContract() {
+        math = new Math();
+    }
+}
+```
+
 #### Function modifiers
 
 ```

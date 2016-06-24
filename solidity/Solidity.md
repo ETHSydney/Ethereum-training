@@ -85,13 +85,13 @@ contract TestBools {
     
     function testBoolOperations() returns (bool result) {
         
-        // ||, &&
+        // || is OR, && is AND
         return true || false;
         
-        // !true, !false
+        // ! is NOT
         //return !false;
         
-        // == and !=
+        // == is Equal and != is NOT Equal
         //return 1 == 1;
     }
 }
@@ -243,7 +243,68 @@ contract ArrayExample {
 
 
 #### Struct
+Structs allow you to define more complicated data structures.
+Structs can be declared as either memory or storage.
+```
+contract TestStruct {
 
+    struct SomeStruct {
+        int someNumber;
+        string someString;
+    }
+
+    struct ArrayType {
+        int someInt;
+    }
+    
+    struct SomeStructWithArray {
+        int someNumber;
+        string someString;
+        ArrayType[] someArray;
+    }
+
+    // storage array of structs
+    SomeStruct[] public someStructs;
+
+    function testAddStruct1() returns (uint, int) {
+        someStructs.push(SomeStruct(789, "first way"));
+        return (someStructs.length, someStructs[someStructs.length - 1].someNumber);
+    }
+
+    function testAddStruct2() returns (uint, int) {
+        SomeStruct memory someStruct = SomeStruct(123, "first way");
+        someStructs.push(someStruct);
+        return (someStructs.length, someStructs[someStructs.length - 1].someNumber);
+    }
+    
+    function testAddStruct3() returns (uint, int) {
+        SomeStruct memory someStruct = SomeStruct({someNumber: 456, someString: "second way"});
+        someStructs.push(someStruct);
+        return (someStructs.length, someStructs[someStructs.length - 1].someNumber);
+    }
+    
+    function testAddStructWithMemoryArray() {
+        ArrayType[] memory testArray = new ArrayType[](10);
+        SomeStructWithArray memory someStruct = SomeStructWithArray(123, "test", testArray);
+        // can not implicitly convert memory struct with a memory array in it
+        //someStructs.push(someStruct);     // will not compile
+    }
+    
+    function testAddStructWithStorageArrayVariable() returns (int) {
+        // the following two lines give warning message: "Unititialized storage pointer"
+        SomeStructWithArray storage storageSomeStructWithArray;
+        SomeStructWithArray[] storage storageSomeStructWithArrays;
+        
+        storageSomeStructWithArray.someNumber = 123;
+        storageSomeStructWithArray.someString = "test";
+        storageSomeStructWithArray.someArray.push(ArrayType(123));
+        
+        storageSomeStructWithArrays.push(storageSomeStructWithArray);
+        
+        return storageSomeStructWithArrays[0].someArray[0].someInt;
+    }
+}
+```
 
 #### State Variables
 are values which are permanently stored in contract storage.

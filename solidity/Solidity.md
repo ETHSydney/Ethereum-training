@@ -449,8 +449,8 @@ contract TestMath {
 }
 ```
 
-#### Function modifiers
-
+#### Function visibilities
+Functions can be external, internal, private or public. The default is public.
 ```
 contract TestFunctionModifiers {
     
@@ -480,6 +480,64 @@ contract TestFunctionModifiers {
     }
     
     // internal
+}
+```
+
+#### Function modifiers
+Modifiers are typically used for access controls
+```
+contract TestOwnerModifier {
+    
+    address owner;
+    
+    function TestModifiers() {
+        owner = msg.sender;
+    }
+    
+    modifier onlyOwner {
+        if (owner != msg.sender) {
+            throw;
+        }
+        _
+    }
+    
+    function testIsOwner() onlyOwner returns (bool success) {
+        return true;
+    }
+}
+```
+
+Modifier logic can run at the start or end of a function depending on where the _ is placed.
+```
+contract TestPrePostModifiers {
+    
+    int public test = 1;
+    
+    modifier preFunction {
+        test = 2;
+        _
+    }
+    
+    modifier postFunction {
+        _
+        test = 3;
+    }
+    
+    function testPreFunction() preFunction returns (int result) {
+        test = 4;
+        return test;
+    }
+    
+    // will set test to 3 as the postFunction modifier will be executed
+    function testPostFunctionNoReturn() postFunction returns (int result) {
+        test = 5;
+    }
+    
+    // will set test to 6 as the postFunction modifier will not be executed due to the return
+    function testPostFunctionWithReturn() postFunction returns (int result) {
+        test = 6;
+        return test;
+    }
 }
 ```
 
@@ -602,6 +660,41 @@ contract LoopExample {
         for (var i = 0; i < numbers.length; i++) {
             sum += numbers[i];
         }
+    }
+}
+```
+
+### Exceptions
+```
+contract TestThrows {
+    
+    uint64 public someNumber = 0;
+    
+    function increment() {
+        someNumber++;
+    }
+    
+    // number should not be incremented due to the throw
+    function failedIncrement() {
+        someNumber++;
+        throw;
+    }
+    
+    function testThrow() {
+        throw;
+    }
+    
+    function testNotEnoughGas() {
+        for (uint i=0; i < 1000; i++) {
+            sha256(i);
+            increment();
+        }
+    }
+    
+    // is called when Ether is transfered to this contract
+    function() {
+        // Ether should be returned
+        throw;
     }
 }
 ```

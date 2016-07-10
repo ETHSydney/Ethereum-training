@@ -541,6 +541,34 @@ contract TestPrePostModifiers {
 }
 ```
 
+Parameters can be passed to function modifiers 
+```
+contract TestModifierParameters {
+    
+    int public test = 1;
+    
+    modifier oneParam(int param) {
+        if (param != 0)
+            _
+    }
+    
+    modifier twoParam(int param1, int param2) {
+        if (param1 > 0 && param2 > 1)
+            _
+    }
+    
+    function testOneParam(int firstParam) oneParam(firstParam) returns (int result) {
+        test = firstParam;
+        return test;
+    }
+    
+    function testTwoParam(int firstParam, int secondParam) twoParam(firstParam, secondParam) returns (int result) {
+        test = secondParam;
+        return test;
+    }
+}
+```
+
 ### Constructor
 Is a special function that is invoked when a contract is first deployed. This could be via a transaction or another contract.
 

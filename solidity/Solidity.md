@@ -555,6 +555,8 @@ contract TestModifierParameters {
     modifier twoParam(int param1, int param2) {
         if (param1 > 0 && param2 > 1)
             _
+        else if (param1 == 0)
+            _
     }
     
     function testOneParam(int firstParam) oneParam(firstParam) returns (int result) {

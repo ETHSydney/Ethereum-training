@@ -69,6 +69,28 @@ contract TestContract {
 
 The solidity style guide states [contract and library names should be in CapitalizedWords style](http://solidity.readthedocs.io/en/latest/style-guide.html#contract-and-library-names). 
 
+#### State Variables
+are values which are permanently stored in contract storage.
+```
+contract TestStateVariables {
+    int someInt;
+    bool someBool;
+}
+```
+
+#### Functions
+functions will be covered in move detail later, but to quickly introduce them here's a simple example.
+```
+contract TestStateVariables {
+    int someInt;
+    bool someBool;
+
+    function equal(bool otherBool) returns (bool success) {
+        return someBool == otherBool;
+    }
+}
+```
+
 ### Types
 Solidity is a statically typed language which means the type of data stored in a variable needs to know at compile time. This is the opposite to dynamically typed languages like JavaScript.
 
@@ -87,12 +109,14 @@ contract TestBools {
         
         // || is OR, && is AND
         return true || false;
+        //return true && false;
         
         // ! is NOT
         //return !false;
         
         // == is Equal and != is NOT Equal
-        //return 1 == 1;
+        //return 7 == 3;
+        //return 7 != 3;
     }
 }
 ```
@@ -306,22 +330,16 @@ contract TestStruct {
 }
 ```
 
-#### State Variables
-are values which are permanently stored in contract storage.
-```
-contract TestStateVariables {
-    int someInt;
-    bool someBool;
-}
-```
-
 #### Local variables
 Data is stored in memory rather than persisted into the contracts state. That is, it's not saved into the distributed ledgers.
 
 ```
-contract TestStateVariables {
-    int someInt;
-    bool someBool;
+contract TestLocalVariables {
+
+    function testSetTrue() returns (bool result) {
+        bool localVariable = false;
+        return localVariable;
+    }
 }
 ```
 
@@ -450,36 +468,66 @@ contract TestMath {
 ```
 
 #### Function visibilities
-Functions can be external, internal, private or public. The default is public.
+* external: all, only externally
+* public (default): externally and internally
+* internal: only this contract and contracts deriving from it, only internally
+* private: only this contract, only internally
+
+Only functions of the same contract can be called internally.
+Internal function calls have the advantage that you can use all Solidity types as parameters, but you have to stick to the simpler ABI types for external calls.
 ```
 contract TestFunctionModifiers {
     
+    // private
     function privateFunction() private constant returns (string result) {
         return "private";
     }
     
+    // defaults to a public function
     function testPrivate() returns (string result) {
         return privateFunction();
     }
     
-    function publicFunction() public returns (string result) {
-        return "public";
+    // public
+    function publicFunction() public returns (bool result) {
+        return true;
     }
     
-    function testPublic() returns (string result) {
+    function testPublic() returns (bool result) {
         return publicFunction();
     }
     
+    // external
     function externalFunction() external returns (bool result) {
         return true;
     }
     
     function testExteranl() returns (bool result) {
-        //return externalFunction();
-        return this.externalFunction();
+        //return externalFunction();    // can not jump to an external function
+        return this.externalFunction(); // can call an external function by sending a message
     }
     
     // internal
+    function internalFunction() internal returns (bool result) {
+        return true;
+    }
+    
+    function testInternal() returns (bool result) {
+        return internalFunction();  // can jump to an internal function
+        //return this.internalFunction();   // can not call an internal function by sending a message
+    }
+}
+
+contract TestExternalFunctionCalls {
+    
+    TestFunctionModifiers testFunctionModifiers = new TestFunctionModifiers();
+    
+    function testCall() returns (bool result) {
+        return testFunctionModifiers.publicFunction();
+        //return testFunctionModifiers.privateFunction();   // is not accessible
+        return testFunctionModifiers.externalFunction();
+        //return testFunctionModifiers.internalFunction();    // is not accessible
+    }
 }
 ```
 

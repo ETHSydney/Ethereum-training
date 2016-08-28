@@ -85,7 +85,7 @@ contract TestStateVariables {
     int someInt;
     bool someBool;
 
-    function equal(bool otherBool) returns (bool success) {
+    function isEqual(bool otherBool) returns (bool success) {
         return someBool == otherBool;
     }
 }
@@ -130,7 +130,7 @@ Keywords `uint8` to `uint256` in steps of 8 (unsigned of 8 up to 256 bits) and `
 
 `uint` = `uint256` and is only a positive number including zero. The leading bit that indicated positive or negative sign is dropped.
 
-There currently is no support for floating point numbers they are difficult to be deterministic. eg run node and enter `0.1 + 0.2` which will not equal `0.3`.
+There currently is no support for floating point numbers. eg run node and enter `0.1 + 0.2` which will not equal `0.3`.
 
 ```
 contract TestIntegers {

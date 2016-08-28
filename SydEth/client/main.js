@@ -69,8 +69,8 @@ Template.uploadForm.events({
 			contractName = 'SydEth';
 			contractSource = data;
 			compiledContract = web3.eth.compile.solidity(contractSource);
-			Session.setPersistent('contractAbi', compiledContract[contractName].info.abiDefinition);
-			contractByteCode = compiledContract[contractName].code;
+			Session.setPersistent('contractAbi', compiledContract.info.abiDefinition);
+			contractByteCode = compiledContract.code;
 
 			// deploy contract
 			web3.eth.contract(Session.get('contractAbi')).new(

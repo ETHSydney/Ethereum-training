@@ -69,6 +69,9 @@ Template.uploadForm.events({
 			contractName = 'SydEth';
 			contractSource = data;
 			compiledContract = web3.eth.compile.solidity(contractSource);
+			
+			// Normalize compiledContract. Some versions of testrpc may return a result keyed with the contractName
+			compiledContract = (compiledContract[contractName]) ? compiledContract[contractName] : compiledContract;
 			Session.setPersistent('contractAbi', compiledContract.info.abiDefinition);
 			contractByteCode = compiledContract.code;
 

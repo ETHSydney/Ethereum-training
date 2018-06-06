@@ -40,8 +40,6 @@ Solidity files have a `.sol` extension. Note that Truffle expects the file name 
 
 ### Comments
 
-
-
 are like many other languages
 ```
 // This is a single-line comment.
@@ -72,6 +70,8 @@ contract TestContract {
 
 The [solidity style guide]((http://solidity.readthedocs.io/en/latest/style-guide.html#contract-and-library-names)) states contract and library names should be in CapitalizedWords style. 
 
+See Solidity docs on [Contracts](https://solidity.readthedocs.io/en/latest/contracts.html) for more info.
+
 #### State Variables
 
 are values which are permanently stored in contract storage.
@@ -84,6 +84,8 @@ contract TestStateVariables {
 
 Note the semi-colons `;` are mandatory at the end of each line.
 
+See Solidity docs on [State Variables](https://solidity.readthedocs.io/en/latest/structure-of-a-contract.html#state-variables) for more information.
+
 #### Functions
 
 functions will be covered in move detail later, but to quickly introduce them here's a simple example.
@@ -92,11 +94,16 @@ contract TestStateVariables {
     int someInt;
     bool someBool;
 
-    function isEqual(bool otherBool) view returns (bool success) {
+    function isEqual(bool otherBool) view returns (bool) {
         return someBool == otherBool;
     }
 }
 ```
+
+The `view` keyword means state is not changed hence a signed transaction with Ether is not needed to call this function. That is, the function is read-only.
+
+See Solidity docs on [Functions](https://solidity.readthedocs.io/en/latest/structure-of-a-contract.html#functions) for more information.
+
 
 ### Types
 
@@ -105,6 +112,8 @@ Solidity is a statically typed language which means the type of data stored in a
 #### Value Types
 
 Value types are copied when they are used as function arguments or in assignments.
+
+This section largely comes from the [Types](https://solidity.readthedocs.io/en/latest/types.html) section of the Solidity docs.
 
 #### Booleans
 
@@ -115,7 +124,7 @@ The usual boolean operators apply: `!`, `||`, `&&`, `==`, `!=`
 ```
 contract TestBools {
     
-    function testBoolOperations() returns (bool result) {
+    function testBoolOperations() view returns (bool) {
         
         // || is OR, && is AND
         return true || false;
@@ -130,6 +139,8 @@ contract TestBools {
     }
 }
 ```
+
+See [Booleans](https://solidity.readthedocs.io/en/latest/types.html#booleans) section of the Solidity docs for more information.
 
 #### Integers
 
@@ -146,60 +157,62 @@ There currently is no support for floating point numbers. eg run node and enter 
 ```
 contract TestIntegers {
     
-    function testInt8() returns (int8 result) {
+    function testInt8() view returns (int8) {
         // 2 to the power of 7 minus 1 is the highest int8
         return 2 ** 7 - 1; // 127
     }
     
-    function testUint8() returns (uint8 result) {
+    function testUint8() view returns (uint8) {
         // 2 to the power of 8 minus 1 is the highest uint8
         return 2 ** 8 - 1; // 255
     }
     
-    function testInt16() returns (int16 result) {
+    function testInt16() view returns (int16) {
         // 2 to the power of 15 minus 1 is the highest int8
         return 2 ** 15 - 1; // 32767
     }
     
-    function testInt24() returns (uint24 result) {
+    function testInt24() view returns (uint24) {
         // 2 to the power of 24 minus 1 is the highest uint24
         return 2 ** 24 - 1; // 16777215
     }
     
-    function testInt64() returns (int64 result) {
+    function testInt64() view returns (int64) {
         return 2 ** 63 - 1; // 9223372036854775807
     }
     
-    function testInt256() returns (int256 result) {
+    function testInt256() view returns (int256) {
         return 2 ** 255 - 1; // 57896044618658097711785492504343953926634992332820282019728792003956564819967
     }
     
-    function testOperations() returns (int64 result) {
+    function testOperations() view returns (int64) {
         // like normal maths, * and / are executed before + and -
         return 1 + 2 - 3 * 4 / 3; // -1 not 0
     }
     
-    function testMod() returns (int8 result) {
+    function testMod() view returns (int8) {
         // calculates the remainder of a division
         return 9 % 4;   // remainder of 9 / 4 = 1
     }
     
-    function testPower() returns (int64 result) {
+    function testPower() view returns (int64) {
         return 2 ** 3;  // 2 * 2 * 2 = 8
     }
     
-    function testFractions() returns (int result) {
+    function testFractions() view returns (int) {
         return 0.1 + 0.9; // is supported
         //return 0.1 + 0.2; // is not supported
     }
-    
-    // division is truncated to integers
-    function testDivTruc() returns (int result) {
-        int testInt = 1;
-        return 3 * testInt / 4; // 0 not 0.75 or 1
+
+    // division is truncated to integers. eg 3 / 4 = 0 not 0.75 or 1
+    // zero divisor will throw
+    function testDiv(int dividend, int divisor) view returns (int) {
+        return dividend / divisor;    
     }
 }
 ```
+
+See [Integers](https://solidity.readthedocs.io/en/latest/types.html#integers) section of the Solidity docs for more information.
 
 #### Addresses
 
@@ -207,34 +220,34 @@ An address is a 20 byte number. In hexadecimal format with is 40 characters as 1
 ```
 contract TestAddresses {
     
-    address smallestAddress = 0x1;
-    address largestAddress = 0xffffffffffffffffffffffffffffffffffffffff;
+    address public smallestAddress = 0x1;
+    address public largestAddress = 0xffffffffffffffffffffffffffffffffffffffff;
     
-    function testThis() returns (address result) {
+    function testThis() view returns (address) {
         return this; // 0x692a70d2e424a56d2c6c27aa97d1a86395877b3a
     }
     
-    function testSmallestAddress() returns (address result) {
-        return smallestAddress;
-    }
-    
-    function testLargetAddress() returns (address result) {
-        return largestAddress;
-    }
-    
-    function testCompare() returns (bool result) {
+    function testCompare() view returns (bool) {
         return smallestAddress < largestAddress; // true
     }
     
-    function testGetBalance() returns (uint256 result) {
+    function testGetBalance() view returns (uint256) {
         return largestAddress.balance; // 0
     }
 }
 ```
 
+See [Address](https://solidity.readthedocs.io/en/latest/types.html#address) section of the Solidity docs for more information.
+
 #### Mappings
 
-Depending on what language you are use to, a mapping is a hashmap, dictionary or associative array.
+Depending on what language you are use to, a mapping is a hash table, hash map, dictionary or associative array.
+
+All values in the map are virtually initialized to the types default value. eg false for booleans, 0 for integers, 0 for addresses.
+
+Making a mapping public creates a getter function with the key as the parameter.
+
+The `setMapping` function is the first time we have a function that changes state. This needs the caller to sign an Ethereum transaction and have enough Ether in their account to cover the required gas. See [Ethereum, Gas, Fuel & Fees](https://media.consensys.net/ethereum-gas-fuel-and-fees-3333e17fe1dc) post from Joseph Chow.
 
 ```
 contract TestMappings {
@@ -242,25 +255,19 @@ contract TestMappings {
     mapping (uint => string) public testUintStringMap;
     mapping (address => string) public testAddressStringMap;
     
-    function TestMappings() {
+    function constructor() public {
         testAddressStringMap[this] = "this contract";
         testAddressStringMap[msg.sender] = "message sender";
     }
     
-    function testSetMapping() {
+    function setMapping() public {
         testUintStringMap[0] = "zero";
         testUintStringMap[1] = "one";
     }
-    
-    function testGetStringFromUint(uint index) returns (string result) {
-        return testUintStringMap[index];
-    }
-    
-    function testGetStringFromAddress(address _address) returns (string result) {
-        return testAddressStringMap[_address];
-    }
 }
 ```
+
+See [Mappings](https://solidity.readthedocs.io/en/latest/types.html#mappings) section of the Solidity docs for more information.
 
 #### Arrays
 

@@ -75,7 +75,7 @@ See Solidity docs on [Contracts](https://solidity.readthedocs.io/en/latest/contr
 #### State Variables
 
 are values which are permanently stored in contract storage.
-```
+```Solidity
 contract TestStateVariables {
     int someInt;
     bool someBool;
@@ -89,7 +89,7 @@ See Solidity docs on [State Variables](https://solidity.readthedocs.io/en/latest
 #### Functions
 
 functions will be covered in move detail later, but to quickly introduce them here's a simple example.
-```
+```Solidity
 contract TestStateVariables {
     int someInt;
     bool someBool;

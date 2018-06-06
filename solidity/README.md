@@ -1,13 +1,13 @@
 # Solidity 101
-Solidity is a high-level that compiles to the Ethereum Virtual Machine (EVM) assembly code. 
+Solidity is a high-level language that compiles to Ethereum Virtual Machine (EVM) assembly code. 
 
 ## Documenation
 * [Solidity documentation](http://solidity.readthedocs.io/en/latest/)
 
 ## Editing, compiling and deployment tools
 
-### browser-solidity
-You can write and compile solidity code using [browser-solidity](https://ethereum.github.io/browser-solidity/) which does not need any software installed on your machine.
+### Remix
+You can write and compile solidity code using [Remix](https://remix.ethereum.org/) which is a browser based IDE so you don't need any software installed on your machine.
 
 ### VS Code Editor
 Microsoft's Visual Studio Code
@@ -39,6 +39,9 @@ https://github.com/ConsenSys/truffle
 Solidity files have a `.sol` extension. Note that Truffle expects the file name to be the same as the contract name. The [Solidity style guide](http://solidity.readthedocs.io/en/latest/style-guide.html) states contracts should be named using the CapWords so the filenames should also be capitalised words. eg ContractName.sol 
 
 ### Comments
+
+
+
 are like many other languages
 ```
 // This is a single-line comment.
@@ -47,18 +50,18 @@ are like many other languages
 This is a
 multi-line comment.
 */
-```
-[NatSpec](http://www.nat-spec.com/) comments are supported but not yet documented in the Solidity docs. To generate, use either the `--userdoc` or `--devdoc` output components of `solc`.
-```
-/// triple slash
 
+[Doxygen](https://en.wikipedia.org/wiki/Doxygen) style comments are also supported 
 /**
  * asterisk block
  *
  */
 ```
 
+See [Solidity docs](https://solidity.readthedocs.io/en/latest/layout-of-source-files.html?highlight=comments#comments) for more information.
+
 ### Contracts
+
 If you have done Object Oriented programming before then a contract is really just a class. The different is instead of instantiating an object in memory, a contract instantiates a distributed object on the Ethereum blockchain.
 
 ```
@@ -67,9 +70,10 @@ contract TestContract {
 }
 ```
 
-The solidity style guide states [contract and library names should be in CapitalizedWords style](http://solidity.readthedocs.io/en/latest/style-guide.html#contract-and-library-names). 
+The [solidity style guide]((http://solidity.readthedocs.io/en/latest/style-guide.html#contract-and-library-names)) states contract and library names should be in CapitalizedWords style. 
 
 #### State Variables
+
 are values which are permanently stored in contract storage.
 ```
 contract TestStateVariables {
@@ -78,26 +82,32 @@ contract TestStateVariables {
 }
 ```
 
+Note the semi-colons `;` are mandatory at the end of each line.
+
 #### Functions
+
 functions will be covered in move detail later, but to quickly introduce them here's a simple example.
 ```
 contract TestStateVariables {
     int someInt;
     bool someBool;
 
-    function isEqual(bool otherBool) returns (bool success) {
+    function isEqual(bool otherBool) view returns (bool success) {
         return someBool == otherBool;
     }
 }
 ```
 
 ### Types
+
 Solidity is a statically typed language which means the type of data stored in a variable needs to know at compile time. This is the opposite to dynamically typed languages like JavaScript.
 
 #### Value Types
+
 Value types are copied when they are used as function arguments or in assignments.
 
 #### Booleans
+
 Are either true (1) or false (0) and default to false.
 
 The usual boolean operators apply: `!`, `||`, `&&`, `==`, `!=`
@@ -122,6 +132,7 @@ contract TestBools {
 ```
 
 #### Integers
+
 Are whole number - not a fractional number.
 
 Keywords `uint8` to `uint256` in steps of 8 (unsigned of 8 up to 256 bits) and `int8` to `int256`.
@@ -191,6 +202,7 @@ contract TestIntegers {
 ```
 
 #### Addresses
+
 An address is a 20 byte number. In hexadecimal format with is 40 characters as 16 takes up 4 bits.
 ```
 contract TestAddresses {
@@ -221,6 +233,7 @@ contract TestAddresses {
 ```
 
 #### Mappings
+
 Depending on what language you are use to, a mapping is a hashmap, dictionary or associative array.
 
 ```
@@ -267,6 +280,7 @@ contract ArrayExample {
 
 
 #### Struct
+
 Structs allow you to define more complicated data structures.
 Structs can be declared as either memory or storage.
 ```
@@ -331,6 +345,7 @@ contract TestStruct {
 ```
 
 #### Local variables
+
 Data is stored in memory rather than persisted into the contracts state. That is, it's not saved into the distributed ledgers.
 
 ```
@@ -362,6 +377,7 @@ contract TestValueType {
 ```
 
 #### Type inference
+
 Variable types can be inferred when they are initialised at declaration.
 ```
 contract TestInfer {
@@ -376,6 +392,7 @@ contract TestInfer {
 ```
 
 ### Functions
+
 function can have no arguments or return types.
 functions can have one or more arguments of a specified type.
 functions can have one or more return types.
@@ -418,6 +435,7 @@ contract TestFunctions {
 ```
 
 #### Calling functions on other contracts
+
 There are two ways to call another contract
 
 1. your contract instantiates the contract. See TestMath.createNewMathContract() below
@@ -468,6 +486,7 @@ contract TestMath {
 ```
 
 #### Function visibilities
+
 * external: all, only externally
 * public (default): externally and internally
 * internal: only this contract and contracts deriving from it, only internally
@@ -532,6 +551,7 @@ contract TestExternalFunctionCalls {
 ```
 
 #### Function modifiers
+
 Modifiers are typically used for access controls
 ```
 contract TestOwnerModifier {
@@ -620,7 +640,8 @@ contract TestModifierParameters {
 ```
 
 ### Constructor
-Is a special function that is invoked when a contract is first deployed. This could be via a transaction or another contract.
+
+Is a special function that is invoked when a contract is first deployed. This could be via a transaction or another contract. It use to be a function with the same name as the contract but is now done using the `constructor` reserved word.
 
 ```
 contract TestConstructor {
@@ -628,7 +649,7 @@ contract TestConstructor {
     string public state;
     bool public finished;
     
-    function TestConstructor(string _state, bool someBool) {
+    function constructor(string _state, bool someBool) {
         state = _state;
     }
 }
@@ -717,6 +738,7 @@ contract TestControlStructures {
 ```
 
 #### For loops
+
 Solidity for loops are like C.
 ```
 contract LoopExample {
@@ -743,6 +765,7 @@ contract LoopExample {
 ```
 
 ### Exceptions
+
 ```
 contract TestThrows {
     
@@ -778,6 +801,7 @@ contract TestThrows {
 ```
 
 ### Events
+
 Are the only way a contract can interact with the outside world. Data is emitted out of the blockchain via an event. An external process needs to register to receive events from an ethereum node/client.
 ```
 contract TestEvents {
@@ -801,10 +825,12 @@ contract TestEvents {
 ```
 
 ### Importing other source files
+
 There a few ways you can import a file but the simplest is
 `import "filename";`
 
 ### fallback function
+
 Return Ether if someone sends Ether to the contract's address or calls a function that doesn't exist or has incorrect parameter types. 
 
 ```
@@ -815,5 +841,6 @@ contract SomeContractName {
 ```
 
 ## Support
+
 * [Ethereum Stack Exchange for Solidity](https://ethereum.stackexchange.com/questions/tagged/solidity)
 * [Gitter](https://gitter.im/ethereum/solidity/)

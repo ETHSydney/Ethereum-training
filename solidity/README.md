@@ -41,7 +41,7 @@ Solidity files have a `.sol` extension. Note that Truffle expects the file name 
 ### Comments
 
 are like many other languages
-```
+```Solidity
 // This is a single-line comment.
 
 /*
@@ -62,7 +62,7 @@ See [Solidity docs](https://solidity.readthedocs.io/en/latest/layout-of-source-f
 
 If you have done Object Oriented programming before then a contract is really just a class. The different is instead of instantiating an object in memory, a contract instantiates a distributed object on the Ethereum blockchain.
 
-```
+```Solidity
 contract TestContract {
 
 }
@@ -121,7 +121,7 @@ Are either true (1) or false (0) and default to false.
 
 The usual boolean operators apply: `!`, `||`, `&&`, `==`, `!=`
 
-```
+```Solidity
 contract TestBools {
     
     function testBoolOperations() view returns (bool) {
@@ -154,7 +154,7 @@ Keywords `uint8` to `uint256` in steps of 8 (unsigned of 8 up to 256 bits) and `
 
 There currently is no support for floating point numbers. eg run node and enter `0.1 + 0.2` which will not equal `0.3`.
 
-```
+```Solidity
 contract TestIntegers {
     
     function testInt8() view returns (int8) {
@@ -217,7 +217,7 @@ See [Integers](https://solidity.readthedocs.io/en/latest/types.html#integers) se
 #### Addresses
 
 An address is a 20 byte number. In hexadecimal format with is 40 characters as 16 takes up 4 bits.
-```
+```Solidity
 contract TestAddresses {
     
     address public smallestAddress = 0x1;
@@ -249,7 +249,7 @@ Making a mapping public creates a getter function with the key as the parameter.
 
 The `setMapping` function is the first time we have a function that changes state. This needs the caller to sign an Ethereum transaction and have enough Ether in their account to cover the required gas. See [Ethereum, Gas, Fuel & Fees](https://media.consensys.net/ethereum-gas-fuel-and-fees-3333e17fe1dc) post from Joseph Chow.
 
-```
+```Solidity
 pragma solidity ^0.4.24;
 
 contract TestMappings {    
@@ -278,7 +278,7 @@ See [Mappings](https://solidity.readthedocs.io/en/latest/types.html#mappings) se
 
 Arrays can be fixed for dynamic in size.
 
-```
+```Solidity
 contract ArrayExample {
 
     uint256[] public someNumbers;
@@ -311,7 +311,7 @@ See [Arrays](https://solidity.readthedocs.io/en/latest/types.html#arrays) sectio
 Structs allow you to define more complicated data structures.
 They can be declared in either memory or storage.
 
-```
+```Solidity
 contract TestStruct {
 
     struct SomeStruct {
@@ -376,7 +376,7 @@ contract TestStruct {
 
 Data is stored in memory rather than persisted into the contracts state. That is, it's not saved into the distributed ledgers.
 
-```
+```Solidity
 contract TestLocalVariables {
 
     function testSetTrue() view returns (bool) {
@@ -389,7 +389,7 @@ contract TestLocalVariables {
 #### Pass by value
 
 The following demonstrates pass by value.
-```
+```Solidity
 contract TestValueType {
     
     function setTrue(bool firstArg) {
@@ -408,7 +408,7 @@ contract TestValueType {
 
 `var` is now deprecated. You should instead explicitly declare the variable type.
 Variable types can be inferred when they are initialised at declaration. 
-```
+```Solidity
 contract TestInfer {
     function test() public pure returns (bool result) {
         var someBool = false;
@@ -425,8 +425,7 @@ function can have no arguments or return types.
 functions can have one or more arguments of a specified type.
 functions can have one or more return types.
 
-
-```
+```Solidity
 contract TestFunctions {
     
     bool public didSomething = false;
@@ -470,7 +469,7 @@ There are two ways to call another contract
 1. your contract instantiates the contract. See `TestMath.createNewMathContract()` below
 2. you cast the address of an existing contract. See `TestMath.setMathContract(address)` below
 
-```
+```Solidity
 contract Math {
     
     // a simple function to be called from another contract
@@ -525,7 +524,7 @@ contract TestMath {
 
 Only functions of the same contract can be called internally.
 Internal function calls have the advantage that you can use all Solidity types as parameters, but you have to stick to the simpler ABI types for external calls.
-```
+```Solidity
 contract TestFunctionModifiers {
     
     // private
@@ -589,7 +588,7 @@ See [Visibility and getters](https://solidity.readthedocs.io/en/latest/contracts
 #### Function modifiers
 
 Modifiers are typically used for access controls. They are like C macros or Java Aspects.
-```
+```Solidity
 contract TestOwnerModifier {
     
     // default the owner to the account that deployed the contract
@@ -608,7 +607,7 @@ contract TestOwnerModifier {
 ```
 
 Modifier logic can run at the start or end of a function depending on where the _ is placed.
-```
+```Solidity
 contract TestPrePostModifiers
 {    
     int public test = 1;
@@ -642,7 +641,7 @@ contract TestPrePostModifiers
 ```
 
 Parameters can be passed to function modifiers 
-```
+```Solidity
 contract TestModifierParameters {
     
     int public test = 1;
@@ -676,7 +675,7 @@ See [Function Modifiers](https://solidity.readthedocs.io/en/latest/structure-of-
 
 Is a special function that is invoked when a contract is first deployed. This could be via a transaction or another contract. It use to be a function with the same name as the contract but is now done using the `constructor` reserved word. Note there is no function keyword before the constructor keyword
 
-```
+```Solidity
 contract TestConstructor {
     
     string public state;
@@ -691,7 +690,7 @@ contract TestConstructor {
 ### Control Structures
 
 Covers `if`, `else`, `for`, `while`, `continue`, `break`, `return` 
-```
+```Solidity
 contract TestControlStructures {
     
     function testIf(int testNumber) public pure returns (string result) {
@@ -766,7 +765,7 @@ See [Control Structures](https://solidity.readthedocs.io/en/latest/control-struc
 #### For loops
 
 Solidity for loops are like C.
-```
+```Solidity
 contract LoopExample {
     function sumArray(int[] numbers) pure returns (int sum) {
         for (uint i = 0; i < numbers.length; i++) {
@@ -780,7 +779,7 @@ You can't iterate over the values in the array like `for number in numbers {sum 
 Or call a function like JavaScript `numbers.forEach(function(number) {sum += number;});`
 
 Note uint was used for the iterator i. The following snippet just declares i as a var which will use type interance to uint8. This means i is limited to 2^8 - 1 = 256 - 1 = 255. Is the array has more than 256 items the loop will continue until the contract runs out of gas.
-```
+```Solidity
 contract LoopExample {
     function sumArray(int[] numbers) returns (int sum) {
         for (var i = 0; i < numbers.length; i++) {
@@ -792,7 +791,7 @@ contract LoopExample {
 
 ### Exceptions
 
-```
+```Solidity
 contract TestThrows {
     
     uint64 public someNumber = 0;
@@ -843,7 +842,7 @@ See [Revert(), Assert(), and Require() in Solidity, and the New REVERT Opcode in
 ### Events
 
 Are the only way a contract can interact with the outside world. Data is emitted out of the blockchain via an event. An external process needs to register to receive events from an ethereum node/client.
-```
+```Solidity
 contract TestEvents {
     
     event EmitAString(string something);

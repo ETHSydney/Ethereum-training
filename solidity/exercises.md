@@ -37,8 +37,20 @@ where F(1) and F(2) = 1
 ### Exercise
 * Create a function to return the fibonacci number in a position (n) in the sequence
 
+Pseudo code
+```
+function(integer n)
+{
+  if n = 0
+    return 0
+  else if n < 2
+    return 1
+  else
+    return f(n-1) + f(n-2)
+}
+```
+
 ### Enhancements
-* Add an fallback function to return Ether if any sent to the contract
 * Publish an event when a fibonacci number is calculated
 * Persist the result of a fibonacci number if it hasn't been calculated before
 

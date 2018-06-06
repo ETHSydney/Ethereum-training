@@ -250,19 +250,24 @@ Making a mapping public creates a getter function with the key as the parameter.
 The `setMapping` function is the first time we have a function that changes state. This needs the caller to sign an Ethereum transaction and have enough Ether in their account to cover the required gas. See [Ethereum, Gas, Fuel & Fees](https://media.consensys.net/ethereum-gas-fuel-and-fees-3333e17fe1dc) post from Joseph Chow.
 
 ```
-contract TestMappings {
-    
+pragma solidity ^0.4.24;
+
+contract TestMappings {    
     mapping (uint => string) public testUintStringMap;
     mapping (address => string) public testAddressStringMap;
     
-    function constructor() public {
+    constructor() public {
         testAddressStringMap[this] = "this contract";
         testAddressStringMap[msg.sender] = "message sender";
+        
+        testUintStringMap[0] = "default";
     }
     
-    function setMapping() public {
+    function testSetMapping() public {
         testUintStringMap[0] = "zero";
         testUintStringMap[1] = "one";
+        
+        testAddressStringMap[this] = "set";
     }
 }
 ```
@@ -271,25 +276,41 @@ See [Mappings](https://solidity.readthedocs.io/en/latest/types.html#mappings) se
 
 #### Arrays
 
+Arrays can be fixed for dynamic in size.
+
 ```
 contract ArrayExample {
-    function initArray() {
-        // int[3] memory numbers = [1, 2, 3];
-        int[3] memory numbers = [int(1), 2, 3];
+
+    uint256[] public someNumbers;
+
+    // you can add an element to a dynamic array with push
+    function pushValue(uint256 value) public returns (uint256) {
+        someNumbers.push(value);
+        return someNumbers.length;
+    }
+    
+    // An array of ABI type can be passed into a public function
+    function setArray(uint256[] newArray) public returns (uint256) {
+        someNumbers = newArray;
+        return someNumbers.length;
+    }
+
+    // you may have to explicitly convert types in array declarations
+    // Note numbers is returned from the function
+    function fixedMemoryArray() public pure returns (int[3] numbers) {
+        //numbers = [1, 2, 3];  // will not compile as the compiler assumes int8
+        numbers = [int(1), 2, 3];  // does compile
     }
 }
 ```
 
-#### Bytes
-
-
-#### Strings
-
+See [Arrays](https://solidity.readthedocs.io/en/latest/types.html#arrays) section of the Solidity docs for more information.
 
 #### Struct
 
 Structs allow you to define more complicated data structures.
-Structs can be declared as either memory or storage.
+They can be declared in either memory or storage.
+
 ```
 contract TestStruct {
 
@@ -310,6 +331,7 @@ contract TestStruct {
 
     // storage array of structs
     SomeStruct[] public someStructs;
+    SomeStructWithArray[] public storageSomeStructWithArrays;
 
     function testAddStruct1() returns (uint, int) {
         someStructs.push(SomeStruct(789, "first way"));
@@ -338,7 +360,6 @@ contract TestStruct {
     function testAddStructWithStorageArrayVariable() returns (int) {
         // the following two lines give warning message: "Unititialized storage pointer"
         SomeStructWithArray storage storageSomeStructWithArray;
-        SomeStructWithArray[] storage storageSomeStructWithArrays;
         
         storageSomeStructWithArray.someNumber = 123;
         storageSomeStructWithArray.someString = "test";
@@ -358,7 +379,7 @@ Data is stored in memory rather than persisted into the contracts state. That is
 ```
 contract TestLocalVariables {
 
-    function testSetTrue() returns (bool result) {
+    function testSetTrue() view returns (bool) {
         bool localVariable = false;
         return localVariable;
     }
@@ -377,23 +398,23 @@ contract TestValueType {
     
     function testSetTrue() returns (bool result) {
         bool testBool = false;
-        setTrue(testBool);
-        return testBool;
+        setTrue(testBool);  // testBool is passed by value so remains false
+        return testBool;    // returns false
     }
 }
 ```
 
 #### Type inference
 
-Variable types can be inferred when they are initialised at declaration.
+`var` is now deprecated. You should instead explicitly declare the variable type.
+Variable types can be inferred when they are initialised at declaration. 
 ```
 contract TestInfer {
-    function test() returns (bool result) {
+    function test() public pure returns (bool result) {
         var someBool = false;
-        var anotherBool = true;
-        var someString = "this can not be returned as it's a string not a bool";
+        bool anotherBool = true;
         
-        return anotherBoolType;
+        return someBool;
     } 
 }
 ```
@@ -403,6 +424,7 @@ contract TestInfer {
 function can have no arguments or return types.
 functions can have one or more arguments of a specified type.
 functions can have one or more return types.
+
 
 ```
 contract TestFunctions {
@@ -445,19 +467,19 @@ contract TestFunctions {
 
 There are two ways to call another contract
 
-1. your contract instantiates the contract. See TestMath.createNewMathContract() below
-2. you cast the address of an existing contract. See TestMath.setMathContract(address) below
+1. your contract instantiates the contract. See `TestMath.createNewMathContract()` below
+2. you cast the address of an existing contract. See `TestMath.setMathContract(address)` below
 
 ```
 contract Math {
     
     // a simple function to be called from another contract
-    function add(int a, int b) returns (int result) {
+    function add(int a, int b) pure returns (int) {
         return a + b;
     }
     
     // used to validate that an address implements the getMathAddress method hence is of type Math
-    function getMathAddress() returns (address result) {
+    function getMathAddress() view returns (address) {
         return this;
     }
 }
@@ -466,15 +488,17 @@ contract TestMath {
     
     Math public math;
     
-    function TestMaths() {
+    constructor() {
         math = new Math();
     }
     
-    function testAdd() returns (int result) {
+    function testAdd() view returns (int) {
         return math.add(1, 2);
     }
     
-    function setMathContract(address mathContractAddress) returns (bool success) {
+    function setMathContract(address mathContractAddress) returns (bool)
+    {
+        require(mathContractAddress > 0);
         
         // attempt to cast the contract address to a Math contract
         var mathInstance = Math(mathContractAddress);
@@ -486,17 +510,17 @@ contract TestMath {
         }
     }
     
-    function createNewMathContract() {
-        math = new Math();
+    function createNewMathContract() public returns (address) {
+        return math = new Math();
     }
 }
 ```
 
 #### Function visibilities
 
-* external: all, only externally
+* external: can only be externally via th
 * public (default): externally and internally
-* internal: only this contract and contracts deriving from it, only internally
+* internal: only this contract and contracts deriving from it can all internal functions
 * private: only this contract, only internally
 
 Only functions of the same contract can be called internally.
@@ -505,40 +529,43 @@ Internal function calls have the advantage that you can use all Solidity types a
 contract TestFunctionModifiers {
     
     // private
-    function privateFunction() private constant returns (string result) {
+    function privateFunction() private pure returns (string result) {
         return "private";
     }
     
-    // defaults to a public function
-    function testPrivate() returns (string result) {
-        return privateFunction();
+    // defaults to a public function which can be called internally and externally
+    function testPrivate() public pure returns (string result) {
+        return privateFunction();       // can jump to a private function
+        // return this.privateFunction();  // can not externally call a private function by sending a message
     }
     
-    // public
-    function publicFunction() public returns (bool result) {
+    // explicitly public which can be called internally and externally
+    function publicFunction() public pure returns (bool result) {
         return true;
     }
     
-    function testPublic() returns (bool result) {
-        return publicFunction();
+    // calls another public function
+    function testPublic() public view returns (bool result) {
+        // return publicFunction();     // can jump to an public function
+        return this.publicFunction();   // can externally call a public function by sending a message
     }
     
-    // external
-    function externalFunction() external returns (bool result) {
+    // external function can only be called by a public or external function
+    function externalFunction() external pure returns (bool result) {
         return true;
     }
     
-    function testExteranl() returns (bool result) {
+    function testExteranl() public view returns (bool result) {
         //return externalFunction();    // can not jump to an external function
         return this.externalFunction(); // can call an external function by sending a message
     }
     
     // internal
-    function internalFunction() internal returns (bool result) {
+    function internalFunction() internal pure returns (bool result) {
         return true;
     }
     
-    function testInternal() returns (bool result) {
+    function testInternal() public pure returns (bool result) {
         return internalFunction();  // can jump to an internal function
         //return this.internalFunction();   // can not call an internal function by sending a message
     }
@@ -548,7 +575,7 @@ contract TestExternalFunctionCalls {
     
     TestFunctionModifiers testFunctionModifiers = new TestFunctionModifiers();
     
-    function testCall() returns (bool result) {
+    function testCall() public returns (bool result) {
         return testFunctionModifiers.publicFunction();
         //return testFunctionModifiers.privateFunction();   // is not accessible
         return testFunctionModifiers.externalFunction();
@@ -557,26 +584,24 @@ contract TestExternalFunctionCalls {
 }
 ```
 
+See [Visibility and getters](https://solidity.readthedocs.io/en/latest/contracts.html#visibility-and-getters) in the Solidity docs for more information.
+
 #### Function modifiers
 
-Modifiers are typically used for access controls
+Modifiers are typically used for access controls. They are like C macros or Java Aspects.
 ```
 contract TestOwnerModifier {
     
-    address owner;
-    
-    function TestModifiers() {
-        owner = msg.sender;
-    }
+    // default the owner to the account that deployed the contract
+    address public owner = msg.sender;
     
     modifier onlyOwner {
-        if (owner != msg.sender) {
-            throw;
-        }
-        _
+        require(owner == msg.sender);
+        _;      // is the function being modified
     }
     
-    function testIsOwner() onlyOwner returns (bool success) {
+    // can only be called by the account the deployed the contract
+    function testIsOwner() onlyOwner view returns (bool success) {
         return true;
     }
 }
@@ -584,23 +609,23 @@ contract TestOwnerModifier {
 
 Modifier logic can run at the start or end of a function depending on where the _ is placed.
 ```
-contract TestPrePostModifiers {
-    
+contract TestPrePostModifiers
+{    
     int public test = 1;
     
     modifier preFunction {
         test = 2;
-        _
+        _;
     }
     
     modifier postFunction {
-        _
+        _;
         test = 3;
     }
     
+    // sets test to 4 and returns 4. The test = 2 is executed before test = 4
     function testPreFunction() preFunction returns (int result) {
-        test = 4;
-        return test;
+        return test = 4;    
     }
     
     // will set test to 3 as the postFunction modifier will be executed
@@ -608,10 +633,10 @@ contract TestPrePostModifiers {
         test = 5;
     }
     
-    // will set test to 6 as the postFunction modifier will not be executed due to the return
+    // will set test to 3 even with the explicit return.
+    // older compilers set test to 6 as the return stopped the postFunction modifier form being executed
     function testPostFunctionWithReturn() postFunction returns (int result) {
-        test = 6;
-        return test;
+        return test = 6;
     }
 }
 ```
@@ -623,32 +648,33 @@ contract TestModifierParameters {
     int public test = 1;
     
     modifier oneParam(int param) {
-        if (param != 0)
-            _
+        require(param > 0);
+        _;
     }
     
     modifier twoParam(int param1, int param2) {
         if (param1 > 0 && param2 > 1)
-            _
+            _;
         else if (param1 == 0)
-            _
+            _;
     }
     
-    function testOneParam(int firstParam) oneParam(firstParam) returns (int result) {
+    function testOneParam(int firstParam) public oneParam(firstParam) returns (int result) {
         test = firstParam;
         return test;
     }
     
-    function testTwoParam(int firstParam, int secondParam) twoParam(firstParam, secondParam) returns (int result) {
+    function testTwoParam(int firstParam, int secondParam) public twoParam(firstParam, secondParam) returns (int result) {
         test = secondParam;
         return test;
     }
 }
 ```
+See [Function Modifiers](https://solidity.readthedocs.io/en/latest/structure-of-a-contract.html#function-modifiers) in the Solidity docs for more information.
 
 ### Constructor
 
-Is a special function that is invoked when a contract is first deployed. This could be via a transaction or another contract. It use to be a function with the same name as the contract but is now done using the `constructor` reserved word.
+Is a special function that is invoked when a contract is first deployed. This could be via a transaction or another contract. It use to be a function with the same name as the contract but is now done using the `constructor` reserved word. Note there is no function keyword before the constructor keyword
 
 ```
 contract TestConstructor {
@@ -656,7 +682,7 @@ contract TestConstructor {
     string public state;
     bool public finished;
     
-    function constructor(string _state, bool someBool) {
+    constructor(string _state, bool someBool) {
         state = _state;
     }
 }
@@ -668,7 +694,7 @@ Covers `if`, `else`, `for`, `while`, `continue`, `break`, `return`
 ```
 contract TestControlStructures {
     
-    function testIf(int testNumber) returns (string result) {
+    function testIf(int testNumber) public pure returns (string result) {
         
         if (testNumber < 0) {
             return "negative";
@@ -681,14 +707,13 @@ contract TestControlStructures {
         }
     }
     
-    function testForLoop(int[] numbers) returns (int sum) {
+    function testForLoop(int[] numbers) public pure returns (int sum) {
         for (uint i = 0; i < numbers.length; i++) {
             sum += numbers[i];
         }
-        return sum;
     }
     
-    function testForLoopBreakContinue(int[] numbers) returns (int sum) {
+    function testForLoopBreakContinue(int[] numbers) public pure returns (int sum) {
         for (uint i = 0; i < numbers.length; i++) {
             if (i % 2 == 1) {
                 continue;
@@ -700,10 +725,9 @@ contract TestControlStructures {
             
             sum += numbers[i];
         }
-        return sum;
     }
     
-    function testForLoopReturn(int[] numbers) returns (int sum) {
+    function testForLoopReturn(int[] numbers) public pure returns (int sum) {
         for (uint i = 0; i < numbers.length; i++) {
             if (i == 2) {
                 return sum;
@@ -711,19 +735,16 @@ contract TestControlStructures {
             
             sum += numbers[i];
         }
-        return sum;
     }
     
-    function testWhileLoop(int[] numbers) returns (int sum) {
+    function testWhileLoop(int[] numbers) public pure returns (int sum) {
         uint i = 0;
         while (i < numbers.length) {
             sum += numbers[i++];
         }
-        
-        return sum;
     }
     
-    function testWhileBreakContinue(int[] numbers) returns (int sum) {
+    function testWhileBreakContinue(int[] numbers) public pure returns (int sum) {
         uint i = 0;
         while (i < numbers.length) {
             if (i % 2 == 1) {
@@ -736,20 +757,18 @@ contract TestControlStructures {
             
             sum += numbers[i++];
         }
-        
-        return sum;
     }
-    
-    function() {throw;}
 }
 ```
+
+See [Control Structures](https://solidity.readthedocs.io/en/latest/control-structures.html#control-structures) in the Solidity docs for more information.
 
 #### For loops
 
 Solidity for loops are like C.
 ```
 contract LoopExample {
-    function sumArray(int[] numbers) returns (int sum) {
+    function sumArray(int[] numbers) pure returns (int sum) {
         for (uint i = 0; i < numbers.length; i++) {
             sum += numbers[i];
         }
@@ -788,6 +807,24 @@ contract TestThrows {
         throw;
     }
     
+    // number should not be incremented due to the revert
+    function revertIncrement() {
+        someNumber++;
+        revert('reverting increment');
+    }
+    
+    // returns your unused gas
+    function requireIncrement(uint64 incrementBy) {
+        require(incrementBy > 0, 'can not be zero');
+        someNumber = someNumber + incrementBy;
+    }
+    
+    // uses all your unused gas
+    function assertIncrement(uint64 incrementBy) {
+        assert(incrementBy > 0);
+        someNumber = someNumber + incrementBy;
+    }
+    
     function testThrow() {
         throw;
     }
@@ -798,14 +835,10 @@ contract TestThrows {
             increment();
         }
     }
-    
-    // is called when Ether is transfered to this contract
-    function() {
-        // Ether should be returned
-        throw;
-    }
 }
 ```
+
+See [Revert(), Assert(), and Require() in Solidity, and the New REVERT Opcode in the EVM](https://medium.com/blockchannel/the-use-of-revert-assert-and-require-in-solidity-and-the-new-revert-opcode-in-the-evm-1a3a7990e06e) for more details
 
 ### Events
 
@@ -815,18 +848,18 @@ contract TestEvents {
     
     event EmitAString(string something);
     event EmitSomeNumbers(int first, int second);
-    event EmitAddresses(address thisContract, address transactionInvoker);
+    event EmitAddresses(address indexed thisContract, address indexed transactionInvoker);
     
     function testEmitSomeString() {
-        EmitAString("hello world");
+        emit EmitAString("hello world");
     }
     
     function testEmitSomeNumbers() {
-        EmitSomeNumbers(1, 2);
+        emit EmitSomeNumbers(1, 2);
     }
     
     function testEmitAddresses() {
-        EmitAddresses(this, msg.sender);
+        emit EmitAddresses(this, msg.sender);
     }
 }
 ```
@@ -835,17 +868,6 @@ contract TestEvents {
 
 There a few ways you can import a file but the simplest is
 `import "filename";`
-
-### fallback function
-
-Return Ether if someone sends Ether to the contract's address or calls a function that doesn't exist or has incorrect parameter types. 
-
-```
-contract SomeContractName {
-    // return Ether if someone sends Ether to this contract
-    function() { throw; }
-}
-```
 
 ## Support
 

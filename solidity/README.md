@@ -306,6 +306,68 @@ contract ArrayExample {
 
 See [Arrays](https://solidity.readthedocs.io/en/latest/types.html#arrays) section of the Solidity docs for more information.
 
+#### Memory v storage
+
+Data can be stored in either memory or storage. Storage data is persisted to the distributed ledger. Data in memory is lost once the transaction completes.
+
+```Solidity
+contract Fruits
+{
+    string[] public items;
+
+    // Memory v storage variables
+    constructor () public
+    {
+        items.push('apple');
+        items.push('orange');
+
+        // first demo
+        string[] memory newItems = items;   // items[1] will remain orange
+        
+        // second demo
+        //string[] storage newItems = items;   // items[1] will be lemon
+        
+        newItems[1] = 'lemon';
+
+        // third demo
+        // changeFirstElement(items);
+        
+        // forth demo
+        // changeFirstElementStorage(items);
+    }
+
+    // items[1] will remain orange as function arguments default to memory
+    function changeFirstElement(string[] newItems) internal {
+        newItems[0] = 'banana';  
+    }
+
+    // items[1] will be lemon
+    function changeFirstElementStorage(string[] storage newItems) internal {
+        newItems[0] = 'banana';  
+    }
+}
+```
+
+See [Solidity Bits— storage vs. memory](https://medium.com/coinmonks/solidity-bits-storage-vs-memory-a54a650ea4ff) for more information.
+
+#### Pass by value
+
+The following demonstrates pass by value for memory variables.
+```Solidity
+contract TestValueType {
+    
+    function setTrue(bool firstArg) {
+        firstArg = true;
+    }
+    
+    function testSetTrue() returns (bool result) {
+        bool testBool = false;
+        setTrue(testBool);  // testBool is passed by value so remains false
+        return testBool;    // returns false
+    }
+}
+```
+
 #### Struct
 
 Structs allow you to define more complicated data structures.
@@ -368,38 +430,6 @@ contract TestStruct {
         storageSomeStructWithArrays.push(storageSomeStructWithArray);
         
         return storageSomeStructWithArrays[0].someArray[0].someInt;
-    }
-}
-```
-
-#### Local variables
-
-Data is stored in memory rather than persisted into the contracts state. That is, it's not saved into the distributed ledgers.
-
-```Solidity
-contract TestLocalVariables {
-
-    function testSetTrue() view returns (bool) {
-        bool localVariable = false;
-        return localVariable;
-    }
-}
-```
-
-#### Pass by value
-
-The following demonstrates pass by value.
-```Solidity
-contract TestValueType {
-    
-    function setTrue(bool firstArg) {
-        firstArg = true;
-    }
-    
-    function testSetTrue() returns (bool result) {
-        bool testBool = false;
-        setTrue(testBool);  // testBool is passed by value so remains false
-        return testBool;    // returns false
     }
 }
 ```
